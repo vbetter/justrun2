@@ -1,0 +1,48 @@
+<!--index.wxml-->
+<view class="container">
+    <!-- 用户登录测试 -->
+    <view class="userinfo" bindtap="login">
+        <image
+            class="userinfo-avatar"
+            src="{{logged ? userInfo.avatarUrl : './user-unlogin.png'}}"
+            background-size="cover"
+        ></image>
+        <view>
+            <text class="userinfo-nickname">{{logged ? userInfo.nickName : '点击测试登录接口'}}</text>
+            <text class="userinfo-nickname" wx:if="{{logged}}">{{userInfo.lastLoginTime}}</text>
+        </view>
+    </view>
+
+    <!-- 群跑组 Key，相同的key会被分在一个组，由发起者提供 -->
+    <view class="uploader">
+        <view class="tunnel-text" bindtap="doUploadUserData">
+            <text>key:{{activeKey}} (由发起者提供)</text>
+        </view>
+    </view>
+
+    <!-- 是否分组 -->
+    <view class="setGroup">
+        <view class="tunnel-text uploader-text">
+            <text >分组（开启团队模式）</text>
+            <switch class="tunnel-switch" bindchange="switchGroupMode" checked = "{{isGroup}}" color="#007AFF"/>
+        </view>
+
+        <view class="tunnel-text {{ tunnelStatus && tunnelStatus === 'connected' ? 'active' : 'disable' }}" wx:if="{{isGroup}}" >
+              <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+    <view class="picker">
+      我的分组:{{array[myGroupIndex]}}组
+    </view>
+  </picker>
+        </view>
+    </view>
+
+
+    <!-- 上传数据 -->
+    <view class="uploader">
+        <view class="uploader-text" bindtap="doUploadUserData">
+            <text>上传数据</text>
+        </view>
+    </view>
+
+   
+</view>

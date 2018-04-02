@@ -1,0 +1,8 @@
+<!--pages/rule/rule.wxml-->
+<view class="page">
+ <view class="page__hd">
+        <view class="page__title">{{activeTitle}}</view>
+        <text class="page__desc" word-break = "break-word" word-wrap="break-all">{{activeContent}}</text>
+    </view>
+    
+</view>

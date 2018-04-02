@@ -1,0 +1,7 @@
+/* pages/main/main.wxss */
+
+.page{
+  
+  word-wrap: break-all;
+  word-break: break-word;
+}
