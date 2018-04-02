@@ -4,7 +4,8 @@
     "pages/addCgi/addCgi",
     "pages/main/main",
     "pages/rule/rule",
-    "pages/group/group"
+    "pages/group/group",
+    "pages/record/record"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",

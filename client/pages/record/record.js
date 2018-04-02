@@ -1,32 +1,20 @@
-// pages/group/group.js
-var userDataManager = require('../../utils/UserDataManager.js')
-
-
+// pages/record/record.js
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    list: [],
+  
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var teamIndex = userDataManager.GetMyTeamIndex()
-    var team = userDataManager.GetTeamByTeamIndex(teamIndex);
-    console.log(teamIndex)
-    console.log(team)
-
-    this.setData({
-      list: team.member,
-    })
+  
   },
-  onClickItem: function (e) {
 
-  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

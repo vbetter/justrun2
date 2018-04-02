@@ -1,6 +1,6 @@
 var IsGroup = true;//是否分组
 
-var MyTeamIndex = 0;//我的分组编号，0为1组，1为2组
+var MyTeamIndex = 1;//我的分组编号，0为1组，1为2组
 
 
 var ActiveKey ="Test001";//由发起者申请，发给每个组员

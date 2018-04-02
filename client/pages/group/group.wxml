@@ -8,11 +8,11 @@
             <view class="weui-cells weui-cells_in-small-appmsg" wx:for = "{{list}}" wx:key = "item" bindtap='onClickItem' data-item = "{{item}}">
                 <view class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" >
                     <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <image class="weui-media-box__thumb" src="{{item.teamIcon}}" />
+                        <image class="weui-media-box__thumb" src="../../res/ic_run.png" />
                     </view>
                     <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <view class="weui-media-box__title">{{item.teamName}}</view>
-                        <view class="weui-media-box__desc">{{item.teamContent}}</view>
+                        <view class="weui-media-box__title">{{item.username}}</view>
+                        <view class="weui-media-box__desc">test</view>
                     </view>
                 </view>
                 </view>
