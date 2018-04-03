@@ -21,7 +21,8 @@ var config = {
         tunnelUrl: `${host}/weapp/tunnel`,
         // 上传个人数据地址
         uploadUserDataUrl: `${host}/weapp/uploadUserData`,
-
+        // 更新个人数据地址
+        downloadUserDataUrl: `${host}/weapp/demo`,
         // 上传图片接口
         uploadUrl: `${host}/weapp/upload`
     }

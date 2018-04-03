@@ -39,4 +39,23 @@ var showModel = (title, content) => {
     })
 }
 
+//获取权限对应的字符串
+function GetAuthorityString(value)
+{
+  var str;
+    if(value ==0)
+    {
+        str = "成员";
+    }
+    else if(value ==3)
+    {
+        str = "小队长";
+    }
+    else if(value ==9)
+    {
+        str = "创建者";
+    }
+    return str;
+}
+
 module.exports = { formatTime, showBusy, showSuccess, showModel }

@@ -21,8 +21,8 @@ Page({
 
     this.setData({
       list: userDataManager.GetTeamInfo().teams,
-      activeContent: userDataManager.ActiveMiniContent,
-      activeTitle: userDataManager.ActiveTitle
+      activeContent: userDataManager.ActiveMiniContent(),
+      activeTitle: userDataManager.ActiveTitle()
     })
   },
   gotoRule:function()

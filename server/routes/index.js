@@ -33,5 +33,7 @@ router.get('/message', controllers.message.get)
 router.post('/message', controllers.message.post)
 //test测试helloworld
 router.get('/demo',controllers.demo)
+//test测试helloworld
+//router.get('/userinfo', controllers.demo)
 
 module.exports = router

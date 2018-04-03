@@ -1,5 +1,7 @@
 <!--index.wxml-->
 <view class="container">
+
+
     <!-- 用户登录测试 -->
     <view class="userinfo" bindtap="login">
         <image
@@ -8,11 +10,19 @@
             background-size="cover"
         ></image>
         <view>
+        
             <text class="userinfo-nickname">{{logged ? userInfo.nickName : '点击测试登录接口'}}</text>
             <text class="userinfo-nickname" wx:if="{{logged}}">{{userInfo.lastLoginTime}}</text>
         </view>
     </view>
 
+    <!-- 显示创建跑团 -->
+    <view class="uploader" wx:if="{{enableCreate}}">
+        <view class="uploader-text" bindtap="createKey">
+            <text>创建一个跑团</text>
+        </view>
+    </view>
+    
     <!-- 群跑组 Key，相同的key会被分在一个组，由发起者提供 -->
     <view class="uploader">
         <view class="tunnel-text" bindtap="doUploadUserData">
@@ -44,5 +54,11 @@
         </view>
     </view>
 
+    <!-- 更新数据 -->
+    <view class="uploader">
+        <view class="uploader-text" bindtap="doDownloadUserData">
+            <text>更新数据</text>
+        </view>
+    </view>
    
 </view>

@@ -6,6 +6,7 @@ var userDataManager = require('../../utils/UserDataManager.js')
 
 Page({
     data: {
+        enableCreate:false,//能否创建跑团
         activeKey:'',
         array: ['1', '2'],
         userInfo: {},
@@ -20,9 +21,9 @@ Page({
       title: '个人设置',
     })
       this.setData({
-        activeKey: userDataManager.GetActiveKey,
-      isGroup : userDataManager.IsGroup,
-      myGroupIndex: userDataManager.GetMyTeamIndex
+        activeKey: userDataManager.GetActiveKey(),
+        isGroup : userDataManager.IsGroup(),
+        myGroupIndex: userDataManager.GetMyTeamIndex()
       });
 
       // 页面渲染后 执行
@@ -84,6 +85,11 @@ Page({
         myGroupIndex: e.detail.value
       })
     },
+    createKey:function(e)
+    {
+      //创建一个跑团
+
+    },
     // 切换是否带有登录态
     switchRequestMode: function (e) {
         this.setData({
@@ -128,5 +134,20 @@ Page({
         wx.request(options)
       }
     },
+  doDownloadUserData:function(e)
+  {
+    console.log("更新数据")
 
+    qcloud.request({
+
+      data: { body: "ddd"},
+      url: config.service.downloadUserDataUrl,
+      success: function (response) {
+        console.log(response);
+      },
+      fail: function (err) {
+        console.log(err);
+      }
+    });
+  },
 })

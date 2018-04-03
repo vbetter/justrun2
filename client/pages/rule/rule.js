@@ -16,8 +16,8 @@ Page({
    */
   onLoad: function (options) {
     this.setData({
-      activeContent: userDataManager.ActiveContent,
-      activeTitle: userDataManager.ActiveTitle
+      activeContent: userDataManager.ActiveContent(),
+      activeTitle: userDataManager.ActiveTitle()
     })
   },
 
