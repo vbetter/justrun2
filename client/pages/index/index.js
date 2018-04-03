@@ -138,10 +138,13 @@ Page({
   {
     console.log("更新数据")
 
-    qcloud.request({
+    wx.request({
 
-      data: { body: "ddd"},
       url: config.service.downloadUserDataUrl,
+      data:{
+        open_id: "ddd",
+        test: "123",
+      },
       success: function (response) {
         console.log(response);
       },

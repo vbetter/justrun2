@@ -1,11 +1,14 @@
 module.exports = ctx=>
 {
   //var mydata = ctx.data
-  const tdata = ctx.data
+  console.log("peter")
+  console.log(ctx)
+  console.log(ctx.query)
+  console.log(ctx.query.open_id)
 
   ctx.state.data =
   {
-    mydata: tdata,
+    //mydata: ctx.state.data,
     msg:'hello world2'
   }
 }
