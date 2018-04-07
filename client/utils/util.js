@@ -58,4 +58,7 @@ function GetAuthorityString(value)
     return str;
 }
 
-module.exports = { formatTime, showBusy, showSuccess, showModel }
+module.exports = 
+{
+   formatTime, showBusy, showSuccess, showModel 
+   }

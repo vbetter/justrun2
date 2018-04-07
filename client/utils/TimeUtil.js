@@ -6,6 +6,64 @@ function GetTimeStamp()
   return timestamp;
 }
 
+//获取月日字符串
+function GetMD(timestamp)
+{
+  var date = new Date(timestamp);
+  //年
+  var Y = date.getFullYear();
+  //月
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+  //日
+  var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+  //时
+  var h = date.getHours();
+  //分
+  var m = date.getMinutes();
+  //秒
+  var s = date.getSeconds();
+
+  console.log(M + D);
+  return M+D;
+}
+
+//获取今天月日
+function GetTodayMD() {
+  var timestamp = Date.parse(new Date());
+  var date = new Date(timestamp);
+
+  //月
+  var M =  date.getMonth() + 1;
+  //日
+  var D =  date.getDate();
+
+
+  console.log(M + D);
+  return M +"月" + D + "日";
+}
+
+function Test()
+{
+  var timestamp = Date.parse(new Date());
+  var n = timestamp * 1000;
+  var date = new Date(n);
+  //年
+  var Y = date.getFullYear();
+  //月
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+  //日
+  var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+  //时
+  var h = date.getHours();
+  //分
+  var m = date.getMinutes();
+  //秒
+  var s = date.getSeconds();
+
+  console.log("当前时间：" + Y + M + D + h + ":" + m + ":" + s);
+
+}
+
 /*
 //获取当前时间
     var n = timestamp * 1000;
@@ -67,6 +125,9 @@ function GetTimeStamp()
 */
 
 module.exports = 
-{  
+{
+  GetTodayMD: GetTodayMD,
+  GetMD: GetMD,  
   GetTimeStamp: GetTimeStamp,
+  Test: Test,
 }

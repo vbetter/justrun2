@@ -13,10 +13,14 @@ Page({
         logged: false,
         takeSession: false,
         requestResult: '',
-        isGroup:false, //是否分组
+        isGroup: false, //是否分组createKey
         myGroupIndex:1 //我的分数号
     },
-    onLoad: function () {
+    onLoad: function () 
+    {
+      console.log("local teaminfo:",userDataManager.m_teamInfo)
+
+
     wx.setNavigationBarTitle({
       title: '个人设置',
     })
@@ -44,6 +48,8 @@ Page({
         qcloud.login({
             success(result) {
                 if (result) {
+                  userDataManager.SetUserInfo(result);
+
                     util.showSuccess('登录成功')
                     that.setData({
                         userInfo: result,
@@ -61,6 +67,7 @@ Page({
                                 userInfo: result.data.data,
                                 logged: true
                             })
+                            userDataManager.SetUserInfo(result);
                         },
 
                         fail(error) {
@@ -85,10 +92,155 @@ Page({
         myGroupIndex: e.detail.value
       })
     },
+    testAdd: function (e) {
+      util.showBusy('请求中...')
+      var that = this
+      var options = {
+        url: config.service.testAdd,
+        login: true, 
+        data: {
+          group_key: this.data.activeKey,
+          open_id: this.data.userInfo.openId,
+        },
+        success(result) {
+          util.showSuccess('请求成功完成')
+          that.setData({
+            requestResult: JSON.stringify(result.data)
+          })
+          //需要刷新本地数据
+
+        },
+        fail(error) {
+          util.showModel('请求失败', error);
+          console.log('request fail', error);
+        }
+      }
+      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
+        qcloud.request(options)
+      } else {    // 使用 wx.request 则不带登录态
+        wx.request(options)
+      }
+    },
+    testDelete: function (e) {
+      util.showBusy('请求中...')
+      var that = this
+      var options = {
+        url: config.service.testDelete,
+        login: true,
+        data: {
+          group_key: this.data.activeKey,
+          open_id: this.data.userInfo.openId,
+        },
+        success(result) {
+          util.showSuccess('请求成功完成')
+          that.setData({
+            requestResult: JSON.stringify(result.data)
+          })
+          //需要刷新本地数据
+
+        },
+        fail(error) {
+          util.showModel('请求失败', error);
+          console.log('request fail', error);
+        }
+      }
+      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
+        qcloud.request(options)
+      } else {    // 使用 wx.request 则不带登录态
+        wx.request(options)
+      }
+    },
+    testSet: function (e) {
+      util.showBusy('请求中...')
+      var that = this
+      var options = {
+        url: config.service.testSet,
+        login: true, 
+        data: {
+          group_key: this.data.activeKey,
+          open_id: this.data.userInfo.openId,
+        },
+        success(result) {
+          util.showSuccess('请求成功完成')
+          that.setData({
+            requestResult: JSON.stringify(result.data)
+          })
+          //需要刷新本地数据
+
+        },
+        fail(error) {
+          util.showModel('请求失败', error);
+          console.log('request fail', error);
+        }
+      }
+      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
+        qcloud.request(options)
+      } else {    // 使用 wx.request 则不带登录态
+        wx.request(options)
+      }
+    },
+    testGet: function (e) {
+      util.showBusy('请求中...')
+      var that = this
+      var options = {
+        url: config.service.testGet,
+        login: true, 
+        data: {
+          group_key: this.data.activeKey,
+          open_id: this.data.userInfo.openId,
+        },
+        success(result) {
+          util.showSuccess('请求成功完成')
+          that.setData({
+            requestResult: JSON.stringify(result.data)
+          })
+          //需要刷新本地数据
+
+        },
+        fail(error) {
+          util.showModel('请求失败', error);
+          console.log('request fail', error);
+        }
+      }
+      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
+        qcloud.request(options)
+      } else {    // 使用 wx.request 则不带登录态
+        wx.request(options)
+      }
+    },
     createKey:function(e)
     {
       //创建一个跑团
-
+      util.showBusy('请求中...')
+      var that = this
+      var options = {
+        url: config.service.createGroup,
+        login: true,
+        data: {
+          group_key: this.data.activeKey,
+          open_id: this.data.userInfo.openId,
+        },
+        success(result) {
+          util.showSuccess('请求成功完成')
+          var group = result.data.data.group
+          group.members = JSON.parse(group.members);
+          group.teams = JSON.parse(group.teams);
+          console.log(group)
+          if (group!=null || group!= undefined)
+          {
+            userDataManager.SetTeamInfo(group);
+          }
+        },
+        fail(error) {
+          util.showModel('请求失败', error);
+          console.log('request fail', error);
+        }
+      }
+      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
+        qcloud.request(options)
+      } else {    // 使用 wx.request 则不带登录态
+        wx.request(options)
+      }
     },
     // 切换是否带有登录态
     switchRequestMode: function (e) {
@@ -136,17 +288,40 @@ Page({
     },
   doDownloadUserData:function(e)
   {
-    console.log("更新数据")
+    console.log(this.data.userInfo)
+
+    console.log("更新数据:",this.data.activeKey)
 
     wx.request({
 
-      url: config.service.downloadUserDataUrl,
+      url: config.service.getMyGroupInfo,
       data:{
-        open_id: "ddd",
-        test: "123",
+        group_key: this.data.activeKey,
+        open_id: this.data.userInfo.openId,
       },
       success: function (response) {
-        console.log(response);
+       
+
+        if (response.data.data.msg == "success")
+        {
+          var group = response.data.data.group;
+          console.log("group:", group)
+
+          for (var i = 0; i < group.length;i++)
+          {
+             var item  = group[i];
+             var teamStr = "{teams:" + item.teams + "}";
+             var memberStr = "{members:" + item.members + "}";
+             group[i].teams = JSON.parse(item.teams);
+             group[i].members = JSON.parse(item.members);
+          }
+          console.log("group 2:", group)
+
+          userDataManager.SetTeamInfo(group);
+        }else{
+          util.showModel('请求失败', response.data.data.msg);
+        }
+        
       },
       fail: function (err) {
         console.log(err);

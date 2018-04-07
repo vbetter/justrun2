@@ -23,6 +23,16 @@ var config = {
         uploadUserDataUrl: `${host}/weapp/uploadUserData`,
         // 更新个人数据地址
         downloadUserDataUrl: `${host}/weapp/demo`,
+        testDelete: `${host}/weapp/testDelete`,
+        testAdd: `${host}/weapp/testAdd`,
+        testSet: `${host}/weapp/testSet`,
+        testGet: `${host}/weapp/testGet`,
+        //创建跑团
+        createGroup: `${host}/weapp/createGroup`,
+        //打卡
+        punch: `${host}/weapp/punch`,
+        // 拉取跑团信息
+        getMyGroupInfo: `${host}/weapp/getMyGroupInfo`,
         // 上传图片接口
         uploadUrl: `${host}/weapp/upload`
     }

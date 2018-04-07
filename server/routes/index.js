@@ -31,8 +31,25 @@ router.post('/tunnel', controllers.tunnel.post)
 router.get('/message', controllers.message.get)
 // POST 用来处理微信转发过来的客服消息
 router.post('/message', controllers.message.post)
+// --- 客服消息接口 业务逻辑 --- //
+//创建跑团
+router.get('/createGroup', controllers.group.createGroup)
+//加入跑团
+router.get('/addGroup', controllers.group.addGroup)
+//拉取跑团信息
+router.get('/getMyGroupInfo', controllers.group.getMyGroupInfo)
+//打卡
+router.get('/punch', controllers.userinfo.punch)
+
+//上报我的跑步信息
+
+//上报我的分组信息
+
 //test测试helloworld
-router.get('/demo',controllers.demo)
+router.get('/testDelete',controllers.demo.testDelete)
+router.get('/testAdd', controllers.demo.testAdd)
+router.get('/testSet', controllers.demo.testSet)
+router.get('/testGet', controllers.demo.testGet)
 //test测试helloworld
 //router.get('/userinfo', controllers.demo)
 

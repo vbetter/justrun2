@@ -1,5 +1,6 @@
 // pages/group/group.js
 var userDataManager = require('../../utils/UserDataManager.js')
+var timeUtil = require('../../utils/TimeUtil.js')
 
 
 Page({
@@ -8,6 +9,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    groupInfo:"队伍信息",
     list: [],
   },
 
@@ -15,13 +17,24 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var teamIndex = userDataManager.GetMyTeamIndex()
-    var team = userDataManager.GetTeamByTeamIndex(teamIndex);
-    console.log(teamIndex)
-    console.log(team)
+    timeUtil.Test()
 
+    var teamIndex = userDataManager.m_curSelectGroup;
+    console.log("teamIndex", teamIndex)
+    var team = userDataManager.GetGroupTodayInfo(teamIndex);
+    
+    console.log("team",team)
+    
     this.setData({
-      list: team.member,
+      list: team,
+      groupInfo: teamIndex+"组 打卡信息"
+    })
+
+    var timestamp = Date.parse(new Date());
+    var toDayMD = timeUtil.GetTodayMD();
+
+    wx.setNavigationBarTitle({
+      title: toDayMD+'打卡',
     })
   },
   onClickItem: function (e) {
