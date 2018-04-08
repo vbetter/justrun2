@@ -125,16 +125,16 @@ Page({
       util.showBusy('请求中...')
       var that = this
       var options = {
-        url: config.service.uploadUserDataUrl,
+        url: config.service.punch,
         login: true,
         data: {
           group_key: userDataManager.m_myInfo.ActiveKey,
-          open_id: userDataManager.m_myInfo.openId,
+          open_id: userDataManager.m_myInfo.open_id,
           distance: myDistanceValue
         },
         success(result) {
           util.showSuccess('请求成功完成')
-          console.log('url:', config.service.uploadUserDataUrl)
+          console.log('url:', config.service.punch)
           console.log('request success', result)
           
           //需要刷新本地数据

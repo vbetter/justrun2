@@ -67,7 +67,7 @@ Page({
                                 userInfo: result.data.data,
                                 logged: true
                             })
-                            userDataManager.SetUserInfo(result);
+                            userDataManager.SetUserInfo(result.data.data);
                         },
 
                         fail(error) {

@@ -4,7 +4,7 @@ var m_myInfo =
 {
     MyTeamIndex: 1, //我的分组编号，0:未分组  1:1组，2:2组
     ActiveKey :"Test001", //由发起者申请，发给每个组员
-    openid:0 //我的openid
+    open_id:0 //我的openid
 }
 
 //队伍信息
@@ -238,7 +238,7 @@ function SetTeamInfo(e)
 
 function SetUserInfo(e)
 {
-  m_myInfo.openid = e.openid;
+  m_myInfo.open_id = e.openId;
 
 }
 

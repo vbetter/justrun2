@@ -1,3 +1,22 @@
+const { mysql } = require('../qcloud')
+
+function JsonIsNull(value) {
+  var type;
+  if (value == null) { // 等同于 value === undefined || value === null  
+    return true;
+  }
+  type = Object.prototype.toString.call(value).slice(8, -1);
+  switch (type) {
+    case 'String':
+      return !!$.trim(value);
+    case 'Array':
+      return !value.length;
+    case 'Object':
+      return $.isEmptyObject(value); // 普通对象使用 for...in 判断，有 key 即为 false  
+    default:
+      return false; // 其他对象均视作非空  
+  }
+}; 
 
 //打卡
 async function punch(ctx, next) 
@@ -22,14 +41,19 @@ async function punch(ctx, next)
   }
   else
   {
-    var members = res.members;
-
+    console.log("res:", res);
+    var members = res[0].members;
+    console.log("members:",members);
+    
     var found = members.find(function (element) {
-      return element.openid == openid;
+      if(element.openid == openid)
+      break;
     });
 
     if (found == null) 
     {
+      console.log("fail,没有找到用户")
+
       ctx.state.data =
         {
           msg: 'fail,没有找到用户'
@@ -42,9 +66,7 @@ async function punch(ctx, next)
       var record = found.record;
       console.log("打卡:", record)
       
-      var foundRecordItem = record.find(function (element) {
-        return element.openid == openid;
-      });
+      var foundRecordItem = record.find(item => item.openid == openid);
 
       if(foundRecordItem == null)
       {
