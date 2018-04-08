@@ -3,6 +3,7 @@
 var userDataManager = require('../../utils/UserDataManager.js')
 var util = require('../../utils/util.js')
 var config = require('../../config')
+var timeUtil = require('../../utils/TimeUtil.js')
 
 Page({
 
@@ -111,8 +112,24 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
-  
+  onShareAppMessage: function (res) 
+  {
+    var timeStr = timeUtil.GetTodayMD();
+
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target)
+    }
+    return {
+      title: timeStr,
+      path: 'pages/main/main',
+      success: function (res) {
+        // 转发成功
+      },
+      fail: function (res) {
+        // 转发失败
+      }
+    }
   },
   uploadMyPunch: function (e) 
   {

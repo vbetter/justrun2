@@ -65,12 +65,15 @@ async function createGroup(ctx,next)
         "Authority": "9",
         "record": [
           {
+            "time": GetMD(1523000140000),
             "timestamp": 1523000140000,
             "distance": 3.5567
           }, {
+            "time": GetMD(1523000140000),
             "timestamp": 1523000140000,
             "distance": 4
           }, {
+            "time": GetMD(1523000140000),
             "timestamp": 1523000140000,
             "distance": 5
           }
@@ -91,8 +94,12 @@ async function createGroup(ctx,next)
     newItem.activeContent = "活动详情";
     newItem.teams = JSON.stringify(teams);
     newItem.members = JSON.stringify(members);
+    //var jsonItem = JSON.stringify(newItem);
+    console.log(newItem)
+
     //创建
     await mysql("TeamData").insert(newItem)
+
     //查询
     var res = await mysql("TeamData").where('group_key', tgroup_key)
     console.log(res);
@@ -101,6 +108,18 @@ async function createGroup(ctx,next)
     ctx.state.data.group = res;
     ctx.state.data.msg = "success";
   }
+}
+
+//获取月日字符串
+function GetMD(timestamp) {
+  var date = new Date(timestamp);
+  //月
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+  //日
+  var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+
+  console.log(M + D);
+  return M + D;
 }
 
 //获取我的跑团信息
@@ -153,7 +172,7 @@ async function addGroup(ctx, next) {
     ctx.state.data.group = res;
     ctx.state.data.msg = "success";
     */
-    
+
   }
 }
 

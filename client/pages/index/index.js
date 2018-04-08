@@ -223,8 +223,14 @@ Page({
         success(result) {
           util.showSuccess('请求成功完成')
           var group = result.data.data.group
-          group.members = JSON.parse(group.members);
-          group.teams = JSON.parse(group.teams);
+
+          console.log("group:",group)
+
+          for (var i = 0; i < group.length; i++) {
+            var item = group[i];
+            group[i].teams = JSON.parse(item.teams);
+            group[i].members = JSON.parse(item.members);
+          }
           console.log(group)
           if (group!=null || group!= undefined)
           {
@@ -310,8 +316,6 @@ Page({
           for (var i = 0; i < group.length;i++)
           {
              var item  = group[i];
-             var teamStr = "{teams:" + item.teams + "}";
-             var memberStr = "{members:" + item.members + "}";
              group[i].teams = JSON.parse(item.teams);
              group[i].members = JSON.parse(item.members);
           }
