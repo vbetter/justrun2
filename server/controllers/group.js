@@ -6,17 +6,8 @@ function JsonIsNull(value) {
   if (value == null) { // 等同于 value === undefined || value === null  
     return true;
   }
-  type = Object.prototype.toString.call(value).slice(8, -1);
-  switch (type) {
-    case 'String':
-      return !!$.trim(value);
-    case 'Array':
-      return !value.length;
-    case 'Object':
-      return $.isEmptyObject(value); // 普通对象使用 for...in 判断，有 key 即为 false  
-    default:
-      return false; // 其他对象均视作非空  
-  }
+  
+  return false;
 }; 
 
 //创建一个跑团
@@ -95,14 +86,14 @@ async function createGroup(ctx,next)
     newItem.teams = JSON.stringify(teams);
     newItem.members = JSON.stringify(members);
     //var jsonItem = JSON.stringify(newItem);
-    console.log(newItem)
+    console.log("====== new item:",newItem)
 
     //创建
     await mysql("TeamData").insert(newItem)
 
     //查询
     var res = await mysql("TeamData").where('group_key', tgroup_key)
-    console.log(res);
+    console.log("=======>查询:",res);
 
     ctx.state.data = {}
     ctx.state.data.group = res;

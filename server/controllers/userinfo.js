@@ -5,17 +5,8 @@ function JsonIsNull(value) {
   if (value == null) { // 等同于 value === undefined || value === null  
     return true;
   }
-  type = Object.prototype.toString.call(value).slice(8, -1);
-  switch (type) {
-    case 'String':
-      return !!$.trim(value);
-    case 'Array':
-      return !value.length;
-    case 'Object':
-      return $.isEmptyObject(value); // 普通对象使用 for...in 判断，有 key 即为 false  
-    default:
-      return false; // 其他对象均视作非空  
-  }
+  
+  return false;
 }; 
 
 //获取月日字符串
@@ -44,8 +35,7 @@ async function punch(ctx, next)
   //先查询有没有这个跑团
   var res = await mysql("TeamData").where('group_key', tgroup_key)
 
-  res = JSON.stringify(res)
-  console.log("res,",res)
+  console.log("====res,",res)
 
   if (JsonIsNull(res) == true) 
   {
@@ -58,9 +48,8 @@ async function punch(ctx, next)
   }
   else
   {
-    console.log("res:", res);
-    var members = res[0].members;
-    console.log("members:",members);
+    console.log("=====> res:", res);
+    var members = JSON.parse(res[0].members);
     
     var found = null;
     for (var i = 0; i < members.length;i++)
@@ -75,11 +64,11 @@ async function punch(ctx, next)
       }
     }
 
-    console.log("found:", found);
+    console.log("=====>found:", found);
 
     if (found == null) 
     {
-      console.log("fail,没有找到用户")
+      console.log("-----fail,没有找到用户")
 
       ctx.state.data =
         {
@@ -107,11 +96,13 @@ async function punch(ctx, next)
       {
           //如果没有找到,创建一个
         var newRecordItem = {
-          "time": GetMD(timestamp),
-          "timestamp": timestamp,
-          "distance": tdistance
+          "time": GetMD(timestamp).toString(),
+          "timestamp": timestamp.toString(),
+          "distance": tdistance.toString()
         }
       }
+
+      console.log("======>members:", members)
 
       await mysql("TeamData").update('members', members)
 
