@@ -1,3 +1,9 @@
+
+var userDataManager = require('../../utils/UserDataManager.js')
+var util = require('../../utils/util.js')
+var config = require('../../config')
+var timeUtil = require('../../utils/TimeUtil.js')
+
 // pages/record/record.js
 Page({
 
@@ -5,14 +11,14 @@ Page({
    * 页面的初始数据
    */
   data: {
-  
+    list: []
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-  
+      //list = 
   },
 
   /**

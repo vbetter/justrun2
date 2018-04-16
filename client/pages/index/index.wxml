@@ -46,6 +46,12 @@
         </view>
     </view>
 
+<!-- 我的记录-->
+   <view class="uploader">
+        <view class="uploader-text" bindtap="doMyRecord">
+            <text>我的记录</text>
+        </view>
+    </view>
 
     <!-- 上传数据 -->
     <view class="uploader">

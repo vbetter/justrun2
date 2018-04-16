@@ -292,6 +292,12 @@ Page({
         wx.request(options)
       }
     },
+    doMyRecord:function(e)
+    {
+        wx.navigateTo({
+          url: '../record/record',
+        })
+    },
   doDownloadUserData:function(e)
   {
     console.log(this.data.userInfo)
