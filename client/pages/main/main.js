@@ -26,20 +26,6 @@ Page({
    */
   onLoad: function (options) {
 
-    console.log("to day distance:",userDataManager.GetTodayMyPunch().distance)
-    var myPunch = userDataManager.GetTodayMyPunch();
-    var isPunch = myPunch.distance >= 3 ? true : false
-    var myDistanceStr = isPunch ? "已跑步 "+ myPunch.distance + " 公里" : this.data.inputValue;
-
-    this.setData({
-      inputValue: myDistanceStr,
-      isPunch: isPunch,
-      list: userDataManager.GetTeamInfo(),
-      activeContent: userDataManager.ActiveMiniContent(),
-      activeTitle: userDataManager.ActiveTitle()
-    })
-
-    console.log("list:",this.data.list)
   },
   gotoRule:function()
 {
@@ -79,7 +65,29 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+    
+    var myPunch = userDataManager.GetTodayMyPunch();
+
+    var isPunch = false;
+    var myDistanceStr ="";
+    if (myPunch ==null)
+    {
+      isPunch= true;
+      myDistanceStr = "数据异常，重新拉取数据";
+    }else{
+      isPunch = myPunch.distance >= 3 ? true : false;
+      myDistanceStr = isPunch ? "已跑步 " + myPunch.distance + " 公里" : this.data.inputValue;
+    }
+
+    this.setData({
+      inputValue: myDistanceStr,
+      isPunch: isPunch,
+      list: userDataManager.GetTeamInfo(),
+      activeContent: userDataManager.ActiveMiniContent(),
+      activeTitle: userDataManager.ActiveTitle()
+    })
+
+    console.log("list:", this.data.list)
   },
 
   /**

@@ -1,14 +1,6 @@
 const { mysql } = require('../qcloud')
+var utils  = require('../tools/Utils.js')
 
-
-function JsonIsNull(value) {
-  var type;
-  if (value == null) { // 等同于 value === undefined || value === null  
-    return true;
-  }
-  
-  return false;
-}; 
 
 //创建一个跑团
 async function createGroup(ctx,next)
@@ -17,7 +9,7 @@ async function createGroup(ctx,next)
   var tgroup_key = ctx.query.group_key
   //先查询有没有这个跑团
   var res = await mysql("TeamData").where('group_key', tgroup_key)
-  if (JsonIsNull(res) == false)
+  if (utils.JsonIsNull(res) == false)
   {
     console.log("跑团已存在!请换一个key申请！res:",res)
 
@@ -123,7 +115,7 @@ async function getMyGroupInfo(ctx, next)
   var res = await mysql("TeamData").where('group_key', tgroup_key)
   console.log(res);
 
-  if (JsonIsNull(res) == true)
+  if (utils.JsonIsNull(res) == true)
   {
     ctx.state.data = 
     {
@@ -150,7 +142,7 @@ async function addGroup(ctx, next) {
   var res = await mysql("TeamData").where('group_key', tgroup_key)
   console.log(res);
 
-  if (JsonIsNull(res) == true) {
+  if (utils.JsonIsNull(res) == true) {
     ctx.state.data =
       {
       }

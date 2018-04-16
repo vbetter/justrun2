@@ -1,13 +1,6 @@
 const { mysql } = require('../qcloud')
+var utils = require('../tools/Utils.js')
 
-function JsonIsNull(value) {
-  var type;
-  if (value == null) { // 等同于 value === undefined || value === null  
-    return true;
-  }
-  
-  return false;
-}; 
 
 //获取月日字符串
 function GetMD(timestamp) {
@@ -37,7 +30,7 @@ async function punch(ctx, next)
 
   console.log("====res,",res)
 
-  if (JsonIsNull(res) == true) 
+  if (utils.JsonIsNull(res) == true) 
   {
     console.log("跑团已存在!请换一个key申请！res:", res)
 
@@ -86,7 +79,7 @@ async function punch(ctx, next)
       
       for (var j = 0; j < record.length; j++) {
         var item = record[j];
-        if (item.time = todayMD) {
+        if (item.time == todayMD) {
           foundRecordItem = item;
           break;
         }
@@ -94,17 +87,19 @@ async function punch(ctx, next)
 
       if(foundRecordItem == null)
       {
+        console.log("======>没有打卡，创建一个新记录", members)
           //如果没有找到,创建一个
         var newRecordItem = {
-          "time": GetMD(timestamp).toString(),
-          "timestamp": timestamp.toString(),
-          "distance": tdistance.toString()
+          "time": GetMD(timestamp),
+          "timestamp": timestamp,
+          "distance": parseFloat(tdistance)
         }
+        record.push(newRecordItem)
       }
-
+      
       console.log("======>members:", members)
 
-      await mysql("TeamData").update('members', members)
+      await mysql("TeamData").update('members', JSON.stringify(members))
 
       ctx.state.data =
         {

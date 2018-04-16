@@ -222,19 +222,28 @@ Page({
         },
         success(result) {
           util.showSuccess('请求成功完成')
+
+          if (result.data == null || result.data.data == null)
+          {
+            console.log("创建跑团异常，result:", result)
+            return ;
+          }
+
           var group = result.data.data.group
 
-          console.log("group:",group)
-
-          for (var i = 0; i < group.length; i++) {
-            var item = group[i];
-            group[i].teams = JSON.parse(item.teams);
-            group[i].members = JSON.parse(item.members);
-          }
-          console.log(group)
           if (group!=null || group!= undefined)
           {
+            console.log("创建跑团成功 ,group:", group)
+
+            for (var i = 0; i < group.length; i++) {
+              var item = group[i];
+              group[i].teams = JSON.parse(item.teams);
+              group[i].members = JSON.parse(item.members);
+            }
+
             userDataManager.SetTeamInfo(group);
+          }else{
+            console.log("创建跑团失败 ,group:", group)
           }
         },
         fail(error) {
@@ -302,7 +311,7 @@ Page({
   {
     console.log(this.data.userInfo)
 
-    console.log("更新数据:",this.data.activeKey)
+    console.log("更新数据 跑团的key:",this.data.activeKey)
 
     wx.request({
 
@@ -314,10 +323,9 @@ Page({
       success: function (response) {
        
 
-        if (response.data.data.msg == "success")
+        if (response.data !=null && response.data.data!=null && response.data.data.msg == "success")
         {
           var group = response.data.data.group;
-          console.log("group:", group)
 
           for (var i = 0; i < group.length;i++)
           {
@@ -325,7 +333,7 @@ Page({
              group[i].teams = JSON.parse(item.teams);
              group[i].members = JSON.parse(item.members);
           }
-          console.log("group 2:", group)
+          console.log("更新本地数据:", group)
 
           userDataManager.SetTeamInfo(group);
         }else{

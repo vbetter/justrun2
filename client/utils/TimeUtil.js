@@ -23,7 +23,7 @@ function GetMD(timestamp)
   //秒
   var s = date.getSeconds();
 
-  console.log(M + D);
+  //console.log(M + D);
   return M+D;
 }
 

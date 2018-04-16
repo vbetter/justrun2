@@ -8,6 +8,9 @@ var m_myInfo =
 }
 
 //队伍信息
+var m_teamInfo = [];
+
+/*
 var m_teamInfo =
     [{
       "group_key":"Test001",//跑团唯一key
@@ -29,12 +32,6 @@ var m_teamInfo =
             {
               "timestamp": 1523000140000,
               "distance": 3.5567
-            }, {
-              "timestamp": 1523000140000,
-              "distance": 4
-            }, {
-              "timestamp": 1523000140000,
-              "distance": 5
             }
           ]
         }
@@ -55,19 +52,21 @@ var m_teamInfo =
         }
       ]
 }];
-
+*/
 
 //获取队伍信息
 function GetTeamByTeamIndex(teamIndex) {
 
-  var teams = m_teamInfo[0].teams;
-  if (teams != null || teams!=undefined)
+  if (m_teamInfo != null && m_teamInfo.length>0)
   {
-    for (let i = 0; i < teams.length; i++) {
-      var item = teams[i];
-      
-      if (item.teamIndex == teamIndex) {
-         return item;
+    var teams = m_teamInfo[0].teams;
+    if (teams != null || teams != undefined) {
+      for (let i = 0; i < teams.length; i++) {
+        var item = teams[i];
+
+        if (item.teamIndex == teamIndex) {
+          return item;
+        }
       }
     }
   }
@@ -77,10 +76,15 @@ function GetTeamByTeamIndex(teamIndex) {
 //获取所有队伍的信息
 function GetTeamInfo() 
 {
+  if (m_teamInfo == null || m_teamInfo.length<=0)
+  return null;
+
   var timestamp = Date.parse(new Date());
   var teamInfo = m_teamInfo[0].teams
   var members = m_teamInfo[0].members
   var toDayMD = timeUtil.GetMD(timestamp);
+
+  console.log("GetTeamInfo-members:",members);
 
   if (teamInfo!=null)
   {
@@ -92,6 +96,8 @@ function GetTeamInfo()
      var totalCompletions =0;//总完成数
      var todayMaxName ="";//今日王者是谁
      var todayMaxDistance =0;//今日王者总公里数
+
+
 
      for (var j = 0; j < members.length ;j++)
      {
@@ -122,6 +128,9 @@ function GetTeamInfo()
      iTeamInfo.todayMaxDistance = todayMaxDistance;
   }
   }
+
+  console.log("teamInfo:",teamInfo);
+
   return teamInfo;
 }
 
@@ -138,7 +147,7 @@ function GetMyTeamIndex()
 
 function GetActiveKey()
 {
-  return m_teamInfo[0].group_key;
+  return m_myInfo["ActiveKey"];// m_teamInfo[0].group_key;
 }
 
 function IsGroup()
@@ -151,24 +160,36 @@ function IsGroup()
 
 function ActiveMiniContent()
 {
+  if (m_teamInfo == null || m_teamInfo.length <= 0)
+    return null;
+
   return m_teamInfo[0].activeMiniContent;
 }
 
 function ActiveTitle() {
+  if (m_teamInfo == null || m_teamInfo.length <= 0)
+    return null;
+
   return m_teamInfo[0].activeTitle;
 }
 
 function ActiveContent()
 {
+  if (m_teamInfo == null || m_teamInfo.length <= 0)
+    return null;
+
   return m_teamInfo[0].activeContent;
 }
 
 function GetGroupTodayInfo(groupIndex)
 {
+  if (m_teamInfo == null || m_teamInfo.length <= 0)
+    return null;
+
   var timestamp = Date.parse(new Date());
   var toDayMD = timeUtil.GetMD(timestamp);
-  console.log("toDayMD:", toDayMD)
-  var myMember = this.GetTeamByTeamIndex(groupIndex);
+  //console.log("toDayMD:", toDayMD)
+  //var myMember = this.GetTeamByTeamIndex(groupIndex);
 
    var list =[];
 
@@ -184,7 +205,7 @@ function GetGroupTodayInfo(groupIndex)
        for (var j = 0; j < item.record.length; j++) {
          var jItem = item.record[j];
          var jdayMD = timeUtil.GetMD(jItem.timestamp);
-         console.log("jdayMD:", jdayMD)
+         //console.log("jdayMD:", jdayMD)
          if (toDayMD == jdayMD) {
            console.log("jItem.distance:", jItem.distance)
            newItem.distance = jItem.distance;
@@ -204,28 +225,39 @@ var m_curSelectGroup =0;
 
 //获取我的今日打卡信息
 function GetTodayMyPunch() {
+  if (m_teamInfo == null || m_teamInfo.length <= 0)
+    return null;
+    
   var timestamp = Date.parse(new Date());
   var toDayMD = timeUtil.GetMD(timestamp);
 
   var myPunch = { distance:0};
 
-  var myMember = this.GetTeamByTeamIndex(m_myInfo.MyTeamIndex);
+  //console.log("m_myInfo.openid:", m_myInfo.open_id);
+
+  var myMember = m_teamInfo[0].members
   if (myMember!=null)
   {
+    //console.log("GetTodayMyPunch-myMember:", myMember)
+
     for (var i = 0; i < myMember.length; i++) {
       var item = myMember[i];
-      if (item.openid == m_myInfo.openid) {
+
+      //console.log("item.record:", item.record)
+      if (item.openid == m_myInfo.open_id) {
         for (var j = 0; j < item.record.length; j++) {
           var jItem = item.record[j];
           var jdayMD = timeUtil.GetMD(jItem.timestamp);
-          console.log("jdayMD:", jdayMD)
+          //console.log("jdayMD:", jdayMD, "  toDayMD:", toDayMD)
           if (toDayMD == jdayMD) {
-            console.log("jItem.distance:", jItem.distance)
+            //console.log("jItem.distance:", jItem.distance)
             myPunch.distance = jItem.distance;
           }
         }
       }
     }
+  }else{
+    console.log("GetTodayMyPunch-myMember is null")
   }
 
   return myPunch;
