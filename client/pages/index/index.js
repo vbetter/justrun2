@@ -14,21 +14,21 @@ Page({
         takeSession: false,
         requestResult: '',
         isGroup: false, //是否分组createKey
-        myGroupIndex:1 //我的分数号
+        myGroupIndex:1 //我的分组号
     },
     onLoad: function () 
     {
+      //var date = new Date('2018-02-21');
+      //console.log(date)
+
       console.log("local teaminfo:",userDataManager.m_teamInfo)
 
 
     wx.setNavigationBarTitle({
       title: '个人设置',
     })
-      this.setData({
-        activeKey: userDataManager.GetActiveKey(),
-        isGroup : userDataManager.IsGroup(),
-        myGroupIndex: userDataManager.GetMyTeamIndex()
-      });
+     
+     this.updateUI();
 
       // 页面渲染后 执行
       console.log("onLoad:", userDataManager)
@@ -87,9 +87,10 @@ Page({
         })
     },
     bindPickerChange: function (e) {
-      console.log('picker发送选择改变，携带值为', e.detail.value)
+      var index = parseInt ( e.detail.value) +1;
+      console.log('picker发送选择改变，携带值为', index)
       this.setData({
-        myGroupIndex: e.detail.value
+        myGroupIndex: index
       })
     },
     testAdd: function (e) {
@@ -307,12 +308,23 @@ Page({
           url: '../record/record',
         })
     },
+updateUI:function()
+{
+  this.setData({
+    activeKey: userDataManager.GetActiveKey(),
+    isGroup: userDataManager.IsGroup(),
+    myGroupIndex: userDataManager.GetMyTeamIndex()
+  });
+  console.log("myGroupIndex:", this.data.myGroupIndex)
+}
+    ,
   doDownloadUserData:function(e)
   {
     console.log(this.data.userInfo)
 
     console.log("更新数据 跑团的key:",this.data.activeKey)
 
+    var that = this;
     wx.request({
 
       url: config.service.getMyGroupInfo,
@@ -336,6 +348,9 @@ Page({
           console.log("更新本地数据:", group)
 
           userDataManager.SetTeamInfo(group);
+
+          that.updateUI();
+
         }else{
           util.showModel('请求失败', response.data.data.msg);
         }

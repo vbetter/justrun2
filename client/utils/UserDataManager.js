@@ -79,25 +79,25 @@ function GetTeamInfo()
   if (m_teamInfo == null || m_teamInfo.length<=0)
   return null;
 
-  var timestamp = Date.parse(new Date());
   var teamInfo = m_teamInfo[0].teams
-  var members = m_teamInfo[0].members
-  var toDayMD = timeUtil.GetMD(timestamp);
 
-  console.log("GetTeamInfo-members:",members);
-
-  if (teamInfo!=null)
+  if (teamInfo!=null && teamInfo.length >0)
   {
+    var newTeamInfo = [];
+
+    var members = m_teamInfo[0].members
+    var timestamp = Date.parse(new Date());
+    var toDayMD = timeUtil.GetMD(timestamp);
+
   for(var i=0 ;i<teamInfo.length;i++)
   {
      var iTeamInfo = teamInfo[i];
+
      var totalDistance = 0;//总公里数
      var totalPeople = 0;//总人数
      var totalCompletions =0;//总完成数
      var todayMaxName ="";//今日王者是谁
      var todayMaxDistance =0;//今日王者总公里数
-
-
 
      for (var j = 0; j < members.length ;j++)
      {
@@ -106,18 +106,23 @@ function GetTeamInfo()
         {
           var srecord = jmember.record[s];
           var sdayMD = timeUtil.GetMD(srecord.timestamp);
-          if(toDayMD == sdayMD)
-          {
-            totalDistance = totalDistance + srecord.distance;
-            if(srecord.distance>=3)
-            {
-              totalCompletions++;
-            }
-          }
 
           if (iTeamInfo.teamIndex == jmember.teamIndex)
           {
             totalPeople++;
+
+            if (toDayMD == sdayMD) {
+              totalDistance = totalDistance + srecord.distance;
+              if (srecord.distance >= 3) {
+                totalCompletions++;
+
+                if (srecord.distance > todayMaxDistance)
+                {
+                  todayMaxName = jmember.username;
+                  todayMaxDistance = srecord.distance;
+                }
+              }
+            }
           }
         }
      }
@@ -181,6 +186,7 @@ function ActiveContent()
   return m_teamInfo[0].activeContent;
 }
 
+//获取今日的打卡组信息
 function GetGroupTodayInfo(groupIndex)
 {
   if (m_teamInfo == null || m_teamInfo.length <= 0)
@@ -196,7 +202,7 @@ function GetGroupTodayInfo(groupIndex)
    for(var i=0 ;i<m_teamInfo[0].members.length;i++)
    {
      var item = m_teamInfo[0].members[i];
-     if(m_myInfo.MyTeamIndex == item.teamIndex)
+     if (groupIndex == item.teamIndex)
      {
        var newItem = {};
        newItem.username = item.username;
@@ -263,6 +269,27 @@ function GetTodayMyPunch() {
   return myPunch;
 }
 
+function GetMyAllRecords()
+{
+  if (m_teamInfo == null || m_teamInfo.length <= 0)
+    return null;
+
+  var myMember = m_teamInfo[0].members
+  if (myMember != null) 
+  {
+    //console.log("GetTodayMyPunch-myMember:", myMember)
+
+    for (var i = 0; i < myMember.length; i++) {
+      var item = myMember[i];
+      if (item.openid == m_myInfo.open_id) {
+        console.log("item.record:", item.record)
+        return item.record;
+      }
+    }
+  }
+  return null;
+}
+
 function SetTeamInfo(e)
 {
   m_teamInfo = e;
@@ -276,6 +303,7 @@ function SetUserInfo(e)
 
 module.exports =
   {
+  GetMyAllRecords: GetMyAllRecords,
   SetUserInfo: SetUserInfo,
   m_teamInfo,
   m_myInfo,

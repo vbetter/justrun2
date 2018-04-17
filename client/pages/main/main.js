@@ -32,7 +32,8 @@ Page({
     wx.navigateTo({
       url: '../../pages/rule/rule'
     })
-  }, onClickItem: function (e) {
+  },
+  onClickItem: function (e) {
 
     var item = e.currentTarget.dataset.item;
 
@@ -45,12 +46,11 @@ Page({
     }
     else {
       
-      userDataManager.m_curSelectGroup = item.teamIndex;
-
-      console.log("goto group:", userDataManager.m_curSelectGroup)
+      var tempStr = "?index=" + item.teamIndex.toString();
+      console.log("tempStr:", tempStr)
       
       wx.navigateTo({
-        url: '../../pages/group/group',
+        url: '../../pages/group/group' + tempStr,
       })
     }
   },
@@ -155,6 +155,7 @@ Page({
         data: {
           group_key: userDataManager.m_myInfo.ActiveKey,
           open_id: userDataManager.m_myInfo.open_id,
+          punch_date: timeUtil.GetTodayMD(),
           distance: myDistanceValue
         },
         success(result) {

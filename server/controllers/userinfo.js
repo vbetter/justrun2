@@ -1,27 +1,16 @@
 const { mysql } = require('../qcloud')
 var utils = require('../tools/Utils.js')
 
-
-//获取月日字符串
-function GetMD(timestamp) {
-  var date = new Date(timestamp);
-  //月
-  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
-  //日
-  var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-
-  console.log(M + D);
-  return M + D;
-}
-
 //打卡
 async function punch(ctx, next) 
 {
   var openid = ctx.query.open_id
   var tgroup_key = ctx.query.group_key
   var tdistance = ctx.query.distance
+  var tpunchDate = ctx.query.punch_date  
+
   var timestamp = Date.parse(new Date());
-  var todayMD = GetMD(timestamp);
+  var todayMD = utils.GetYMD(timestamp);
   console.log("todayMD:",todayMD);
   console.log("ctx.query:",ctx.query)
 
@@ -41,6 +30,20 @@ async function punch(ctx, next)
   }
   else
   {
+    //检测打卡时间是否在活动区间
+    var start_timestamp = parseInt(res[0].start_time);
+    var end_timestamp = parseInt(res[0].end_time);
+    var cur_date = new Date(tpunchDate);
+    var cur_timestamp = Date.parse(cur_date)
+    if (cur_timestamp >= start_timestamp && cur_timestamp <= end_timestamp)
+    {
+
+    }
+    else
+    {
+      console.log("不在活动区间内 start_timestamp : %c end_timestamp：%c cur_timestamp：%c",start_timestamp,end_timestamp,cur_timestamp);
+    }
+
     console.log("=====> res:", res);
     var members = JSON.parse(res[0].members);
     
@@ -90,7 +93,7 @@ async function punch(ctx, next)
         console.log("======>没有打卡，创建一个新记录", members)
           //如果没有找到,创建一个
         var newRecordItem = {
-          "time": GetMD(timestamp),
+          "time": utils.GetYMD(timestamp),
           "timestamp": timestamp,
           "distance": parseFloat(tdistance)
         }

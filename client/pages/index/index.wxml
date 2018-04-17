@@ -26,21 +26,21 @@
     <!-- 群跑组 Key，相同的key会被分在一个组，由发起者提供 -->
     <view class="uploader">
         <view class="tunnel-text" bindtap="createKey">
-            <text>key:{{activeKey}} (由发起者提供)</text>
+            <text>跑团key:{{activeKey}} (由发起者提供)</text>
         </view>
     </view>
 
     <!-- 是否分组 -->
     <view class="setGroup">
         <view class="tunnel-text uploader-text">
-            <text >分组（开启团队模式）</text>
+            <text >分组（{{myGroupIndex}}组）</text>
             <switch class="tunnel-switch" bindchange="switchGroupMode" checked = "{{isGroup}}" color="#007AFF"/>
         </view>
 
         <view class="tunnel-text {{ tunnelStatus && tunnelStatus === 'connected' ? 'active' : 'disable' }}" wx:if="{{isGroup}}" >
               <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
     <view class="picker">
-      我的分组:{{array[myGroupIndex]}}组
+      设置分组:{{myGroupIndex}}组
     </view>
   </picker>
         </view>
@@ -66,29 +66,29 @@
             <text>更新数据</text>
         </view>
     </view>
-   
-       <!-- 更新数据 -->
+       <!-- 
     <view class="uploader">
         <view class="uploader-text" bindtap="testAdd">
             <text>增</text>
         </view>
     </view>
-        <!-- 更新数据 -->
+        
     <view class="uploader">
         <view class="uploader-text" bindtap="testDelete">
             <text>删</text>
         </view>
     </view>
-        <!-- 更新数据 -->
+        
     <view class="uploader">
         <view class="uploader-text" bindtap="testSet">
             <text>改</text>
         </view>
     </view>
-        <!-- 更新数据 -->
+         
     <view class="uploader">
         <view class="uploader-text" bindtap="testGet">
             <text>查</text>
         </view>
     </view>
+    -->
 </view>

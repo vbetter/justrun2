@@ -1,13 +1,9 @@
         <view class="weui-panel">
-        <view class="weui-cells__title">带说明、跳转的列表项</view>
-        <view class="weui-cells weui-cells_after-title">
-            <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">4月5日</view>
-                <view class="weui-cell__ft weui-cell__ft_in-access">3.6公里</view>
-            </navigator>
-            <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">4月6日</view>
-                <view class="weui-cell__ft weui-cell__ft_in-access">4公里</view>
+        <view class="weui-cells__title">我的30天记录</view>
+        <view class="weui-cells weui-cells_after-title" wx:for = "{{list}}" wx:key = "item" bindtap='onClickItem' data-item = "{{item}}">
+            <navigator url="../../pages/myInfo/myInfo?time={{item.time}}" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">{{item.time}}</view>
+                <view class="weui-cell__ft weui-cell__ft_in-access">{{item.distance}}公里</view>
             </navigator>
         </view>
         </view>

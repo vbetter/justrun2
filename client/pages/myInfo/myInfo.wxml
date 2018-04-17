@@ -1,0 +1,29 @@
+<!--pages/myInfo/myInfo.wxml-->
+<view class="page">
+
+<view class="weui-cells__title">表单</view>
+
+            <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">日期</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <picker mode="date" value="{{date}}" start="2015-09-01" end="2017-09-01" bindchange="bindDateChange">
+                        <view class="weui-input">{{date}}</view>
+                    </picker>
+                </view>
+            </view>
+
+             <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">跑步距离</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <input class="weui-input" placeholder="请输入跑步公里数" value='{{distance}}' type="digit" bindinput="bindKeyInput"/>
+                </view>
+            </view>
+
+        <view class="weui-btn-area">
+            <button class="weui-btn"  type="primary" bindtap="onClickUpload">确定</button>
+        </view>
+ </view>

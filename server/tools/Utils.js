@@ -12,8 +12,41 @@ function JsonIsNull(value) {
   return false;
 };
 
+//获取月日字符串
+function GetYMD(timestamp) {
+  var date = new Date(timestamp);
+  //年
+  var Y = date.getFullYear();
+  //月
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+  //日
+  var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+
+  var newDay = Y + "-" + M + "-" + D;
+  //console.log(M + D);
+  return newDay;
+}
+
+//获取今天月日
+function GetTodayYMD() {
+  var timestamp = Date.parse(new Date());
+  var date = new Date(timestamp);
+  //年
+  var Y = date.getFullYear();
+  //月
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+  //日
+  var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+
+  var newDay = Y + "-" + M + "-" + D;
+
+  return newDay;
+}
+
 
 module.exports =
   {
+    GetYMD: GetYMD,
+    GetTodayYMD: GetTodayYMD,
     JsonIsNull: JsonIsNull
   }

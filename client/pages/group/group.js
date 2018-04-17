@@ -17,25 +17,27 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    timeUtil.Test()
 
-    var teamIndex = userDataManager.m_curSelectGroup;
+    var teamIndex = options.index;
     console.log("teamIndex", teamIndex)
     var team = userDataManager.GetGroupTodayInfo(teamIndex);
-    
-    console.log("team",team)
-    
-    this.setData({
-      list: team,
-      groupInfo: teamIndex+"组 打卡信息"
-    })
 
-    var timestamp = Date.parse(new Date());
-    var toDayMD = timeUtil.GetTodayMD();
+    if(team!=null)
+    {
+      console.log("team", team)
 
-    wx.setNavigationBarTitle({
-      title: toDayMD+'打卡',
-    })
+      this.setData({
+        list: team,
+        groupInfo: teamIndex + "组 打卡信息"
+      })
+
+      var timestamp = Date.parse(new Date());
+      var toDayMD = timeUtil.GetTodayMD();
+
+      wx.setNavigationBarTitle({
+        title: toDayMD + '打卡',
+      })
+    }
   },
   onClickItem: function (e) {
     wx.navigateTo({
@@ -53,7 +55,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+
   },
 
   /**

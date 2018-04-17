@@ -11,6 +11,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    select_date:"",
     list: []
   },
 
@@ -18,9 +19,19 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-      //list = 
+    var myRecord = userDataManager.GetMyAllRecords();
+    console.log(myRecord)
+    this.setData({
+    
+      list : myRecord == null ? [] : myRecord
+    })
   },
+  onClickItem: function (e) {
 
+    var item = e.currentTarget.dataset.item;
+    console.log(item)
+
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

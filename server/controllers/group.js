@@ -48,17 +48,9 @@ async function createGroup(ctx,next)
         "Authority": "9",
         "record": [
           {
-            "time": GetMD(1523000140000),
+            "time": utils.GetYMD(1523000140000),
             "timestamp": 1523000140000,
             "distance": 3.5567
-          }, {
-            "time": GetMD(1523000140000),
-            "timestamp": 1523000140000,
-            "distance": 4
-          }, {
-            "time": GetMD(1523000140000),
-            "timestamp": 1523000140000,
-            "distance": 5
           }
         ]
       }
@@ -91,18 +83,6 @@ async function createGroup(ctx,next)
     ctx.state.data.group = res;
     ctx.state.data.msg = "success";
   }
-}
-
-//获取月日字符串
-function GetMD(timestamp) {
-  var date = new Date(timestamp);
-  //月
-  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
-  //日
-  var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-
-  console.log(M + D);
-  return M + D;
 }
 
 //获取我的跑团信息

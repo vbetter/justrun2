@@ -16,30 +16,26 @@ function GetMD(timestamp)
   var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
   //日
   var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-  //时
-  var h = date.getHours();
-  //分
-  var m = date.getMinutes();
-  //秒
-  var s = date.getSeconds();
 
+  var newDay = Y + "-" + M + "-" + D;
   //console.log(M + D);
-  return M+D;
+  return newDay;
 }
 
 //获取今天月日
 function GetTodayMD() {
   var timestamp = Date.parse(new Date());
   var date = new Date(timestamp);
-
+  //年
+  var Y = date.getFullYear();
   //月
-  var M =  date.getMonth() + 1;
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
   //日
-  var D =  date.getDate();
+  var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
 
-
-  console.log(M + D);
-  return M +"月" + D + "日";
+  var newDay = Y + "-" + M + "-" + D;
+  
+  return newDay;
 }
 
 function Test()
