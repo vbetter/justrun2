@@ -13,11 +13,14 @@ async function createGroup(ctx,next)
   {
     console.log("跑团已存在!请换一个key申请！res:",res)
 
+/*
     ctx.state.data =
       {
         group: null,
         msg: '跑团已存在!请换一个key申请！'
       }
+*/
+    ctx.body = '跑团已存在!请换一个key申请！key:' + tgroup_key;
   }else{
     var curdate = new Date();
     var timestamp = Date.parse(curdate)

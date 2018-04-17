@@ -224,9 +224,9 @@ Page({
         success(result) {
           util.showSuccess('请求成功完成')
 
-          if (result.data == null || result.data.data == null)
+          if (result.data.data == null)
           {
-            console.log("创建跑团异常，result:", result)
+            console.log("创建跑团异常，result:", result.data)
             return ;
           }
 
