@@ -222,14 +222,16 @@ Page({
           open_id: this.data.userInfo.openId,
         },
         success(result) {
-          util.showSuccess('请求成功完成')
+          
 
           if (result.data.data == null)
           {
-            console.log("创建跑团异常，result:", result.data)
+            var msg = "创建跑团失败";
+            util.showSuccess(msg)
+            console.log(msg)
             return ;
           }
-
+          util.showSuccess('请求成功完成')
           var group = result.data.data.group
 
           if (group!=null || group!= undefined)
