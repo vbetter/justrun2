@@ -33,11 +33,11 @@ router.get('/message', controllers.message.get)
 router.post('/message', controllers.message.post)
 // --- 客服消息接口 业务逻辑 --- //
 //创建跑团
-router.get('/createGroup', controllers.group.createGroup)
+router.get('/createTeam', controllers.group.createTeam)
 //加入跑团
-router.get('/addGroup', controllers.group.addGroup)
+router.get('/joinTeam', controllers.group.joinTeam)
 //拉取跑团信息
-router.get('/getMyGroupInfo', controllers.group.getMyGroupInfo)
+router.get('/findTeam', controllers.group.findTeam)
 //打卡
 router.get('/punch', controllers.userinfo.punch)
 

@@ -45,11 +45,16 @@ Page({
           punch_date: this.data.date,
           distance: distanceFloat
         },
-        success(result) {
-          util.showSuccess('请求成功完成')
-          console.log('request success', result)
+        success(response) {
+          console.log(response)
+          if (response!=null && response.data != null && response.data.data != null && response.data.data.msg == "success") {
+            util.showSuccess('请求成功完成')
+            console.log('request success', response.data.data.msg)
 
-          //需要刷新本地数据
+            //需要刷新本地数据
+          }else{
+            util.showModel('请求失败', that.data.date);
+          }
 
         },
         fail(error) {
@@ -65,6 +70,7 @@ Page({
 
     } else {
       wx.showToast({
+        icon:'none',
         title: '跑步距离必须大于3公里',
       })
     }

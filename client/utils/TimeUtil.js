@@ -18,7 +18,7 @@ function GetMD(timestamp)
   var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
 
   var newDay = Y + "-" + M + "-" + D;
-  //console.log(M + D);
+
   return newDay;
 }
 
@@ -36,6 +36,14 @@ function GetTodayMD() {
   var newDay = Y + "-" + M + "-" + D;
   
   return newDay;
+}
+
+function GetTimestampByYMD(value)
+{
+  var date = new Date(value);
+  var timestamp = Date.parse(date);
+  timestamp = timestamp / 1000;
+  return timestamp;
 }
 
 function Test()
@@ -122,6 +130,7 @@ function Test()
 
 module.exports = 
 {
+  GetTimestampByYMD: GetTimestampByYMD,
   GetTodayMD: GetTodayMD,
   GetMD: GetMD,  
   GetTimeStamp: GetTimeStamp,

@@ -16,21 +16,88 @@
         </view>
     </view>
 
-    <!-- 显示创建跑团 -->
+</view>
+
+<view class="page__bd">
+    <view class="weui-cells__title">跑团信息</view>
+    <view class="weui-cells weui-cells_after-title">
+
+            <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">我的跑团</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <input class="weui-input" bindinput="bindKeyInput_teamKey" placeholder="请输入key" value= "{{activeKey}}"/>
+                </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">我的分组</view>
+                </view>
+                <view class="weui-cell__bd">
+                <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+                        <view class="weui-input">{{myGroupIndex}}组</view>
+                    </picker>
+                </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input" >
+            
+                <view class="weui-cell__hd">
+                    <view class="weui-label">开始日期</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <picker mode="date" value="{{date}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_start">
+                        <view class="weui-input">{{startTime}}</view>
+                    </picker>
+                </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input" >
+                <view class="weui-cell__hd">
+                    <view class="weui-label">结束日期</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <picker mode="date" value="{{date}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_end">
+                        <view class="weui-input">{{endTime}}</view>
+                    </picker>
+                </view>
+            </view>
+    </view>
+
+        <view class="weui-btn-area"  wx:if="{{!hasTeam}}">
+            <button class="weui-btn" type="primary" bindtap="joinTeam">加入跑团</button>
+        </view>
+
+        <view class="weui-btn-area"  wx:if="{{!hasTeam}}">
+            <button class="weui-btn" type="warn" bindtap="createTeam">创建跑团</button>
+        </view>
+
+</view>
+
+
+
+<!-- 显示创建跑团 
     <view class="uploader" wx:if="{{enableCreate}}">
         <view class="uploader-text" bindtap="createKey">
             <text>创建一个跑团</text>
         </view>
     </view>
+    -->
     
-    <!-- 群跑组 Key，相同的key会被分在一个组，由发起者提供 -->
+    <!-- 群跑组 Key，相同的key会被分在一个组，由发起者提供 
     <view class="uploader">
-        <view class="tunnel-text" bindtap="createKey">
-            <text>跑团key:{{activeKey}} (由发起者提供)</text>
-        </view>
-    </view>
+        <view class="tunnel-text" bindtap="createKey" >
+            <text>我的跑团</text>
 
-    <!-- 是否分组 -->
+            <text >key:{{activeKey}}</text>
+        </view>
+
+    </view>
+-->
+
+    <!-- 是否分组 
     <view class="setGroup">
         <view class="tunnel-text uploader-text">
             <text >分组（{{myGroupIndex}}组）</text>
@@ -45,23 +112,24 @@
   </picker>
         </view>
     </view>
+-->
 
 <!-- 我的记录-->
-   <view class="uploader">
+   <view class="uploader"  wx:if="{{hasTeam}}">
         <view class="uploader-text" bindtap="doMyRecord">
             <text>我的记录</text>
         </view>
     </view>
 
     <!-- 上传数据 -->
-    <view class="uploader">
+    <view class="uploader" wx:if="{{hasTeam}}">
         <view class="uploader-text" bindtap="doUploadUserData">
             <text>上传数据</text>
         </view>
     </view>
 
     <!-- 更新数据 -->
-    <view class="uploader">
+    <view class="uploader" wx:if="{{hasTeam}}">
         <view class="uploader-text" bindtap="doDownloadUserData">
             <text>更新数据</text>
         </view>
@@ -91,4 +159,3 @@
         </view>
     </view>
     -->
-</view>

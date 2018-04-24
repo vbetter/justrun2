@@ -3,6 +3,7 @@ var qcloud = require('../../vendor/wafer2-client-sdk/index')
 var config = require('../../config')
 var util = require('../../utils/util.js')
 var userDataManager = require('../../utils/UserDataManager.js')
+var timeUtil = require('../../utils/TimeUtil.js')
 
 Page({
     data: {
@@ -13,7 +14,12 @@ Page({
         logged: false,
         takeSession: false,
         requestResult: '',
+        startTime:'',//开始时间
+        endTime:'',//结束时间
+        startTimeStamp:0,
+        endTimeStamp:0,
         isGroup: false, //是否分组createKey
+        hasTeam:false,//是否加入跑团
         myGroupIndex:1 //我的分组号
     },
     onLoad: function () 
@@ -31,7 +37,7 @@ Page({
      this.updateUI();
 
       // 页面渲染后 执行
-      console.log("onLoad:", userDataManager)
+      
       this.login();
     },
     // 用户登录示例
@@ -60,14 +66,25 @@ Page({
                     qcloud.request({
                         url: config.service.requestUrl,
                         login: true,
-                        success(result) {
-                          console.log('result.data.data:', result.data.data)
+                        success(result) 
+                        {
+                          if (result.data == null || result.data.data == null)
+                          {
+                            util.showSuccess('登录失败')
+                          } else
+                          {
+                            console.log('登录成功:', result.data.data)
                             util.showSuccess('登录成功')
                             that.setData({
-                                userInfo: result.data.data,
-                                logged: true
+                              userInfo: result.data.data,
+                              logged: true
                             })
                             userDataManager.SetUserInfo(result.data.data);
+
+                            //拉取跑团数据
+
+                          } 
+
                         },
 
                         fail(error) {
@@ -93,6 +110,7 @@ Page({
         myGroupIndex: index
       })
     },
+    /*
     testAdd: function (e) {
       util.showBusy('请求中...')
       var that = this
@@ -209,44 +227,175 @@ Page({
         wx.request(options)
       }
     },
-    createKey:function(e)
+    */
+    bindKeyInput_teamKey:function(e)
     {
+        console.log(e)
+
+        var key = e.detail.value;
+        this.setData({
+          activeKey: key
+        })
+    },
+    bindDateChange_start:function(e)
+    {
+      var timestamp = timeUtil.GetTimestampByYMD(e.detail.value);
+      console.log(timestamp);
+
+      this.setData(
+        {
+          startTime: e.detail.value,
+          startTimeStamp:timestamp
+        }
+      )
+      
+    },
+    bindDateChange_end:function(e)
+    {
+      var timestamp = timeUtil.GetTimestampByYMD(e.detail.value);
+      console.log(timestamp);
+
+      this.setData(
+        {
+          endTime: e.detail.value,
+          endTimeStamp: timestamp
+        }
+      )
+    },
+    joinTeam:function(e)
+    {
+      //加入跑团
+      if(this.data.activeKey==null)
+      {
+        util.showModel('请求失败', '无效的Key');
+        return;
+      }
+
+      if (this.data.userInfo == null) {
+        util.showModel('请求失败', '无效用户信息');
+      }
+
+      
+      util.showBusy('请求中...')
+      var that = this
+      var options = {
+        url: config.service.joinTeam,
+        login: true,
+        data: {
+          group_key: that.data.activeKey,
+          open_id: that.data.userInfo.openId,
+          username: that.data.userInfo.username,
+          teamIndex: that.data.myGroupIndex
+        },
+        success(result) {
+
+          if (result.data != null && result.data.data != null && result.data.data.msg == "success")
+          {
+            
+            var group = result.data.data.group
+
+            for (var i = 0; i < group.length; i++) {
+              var item = group[i];
+              if (item.teams != null) group[i].teams = JSON.parse(item.teams);
+              if (item.members != null) group[i].members = JSON.parse(item.members);
+            }
+
+            console.log("加入跑团成功 ,group:", group)
+
+            userDataManager.SetTeamInfo(group);
+
+            that.setData({
+              startTimeStamp: userDataManager.m_teamInfo[0].start_time,
+              endTimeStamp: userDataManager.m_teamInfo[0].end_time,
+              hasTeam: true
+            })
+
+            that.updateUI();
+            util.showSuccess('请求成功完成');
+          }
+          else
+          {
+            console.log(result)
+            util.showModel('加入跑团失败', result.data.data.msg);
+          }
+        },
+        fail(error) {
+          util.showModel('请求失败', error);
+          console.log('request fail', error);
+        }
+      }
+
+      if (this.data.takeSession) 
+      {  // 使用 qcloud.request 带登录态登录
+        qcloud.request(options)
+      } else {    // 使用 wx.request 则不带登录态
+        wx.request(options)
+      }
+    },
+
+    createTeam:function(e)
+    {
+      if (this.data.activeKey == null) {
+        util.showModel('请求失败', '无效的Key');
+        return;
+      }
+
+      if (this.data.startTimeStamp == 0 || this.data.endTimeStamp == 0 || this.data.startTimeStamp >= this.data.endTimeStamp) {
+        util.showModel('请求失败', '无效的时间');
+        return;
+      }
+
+      if (this.data.userInfo == null)
+      {
+        util.showModel('请求失败', '无效用户信息');
+      }
+
       //创建一个跑团
       util.showBusy('请求中...')
       var that = this
       var options = {
-        url: config.service.createGroup,
+        url: config.service.createTeam,
         login: true,
         data: {
-          group_key: this.data.activeKey,
-          open_id: this.data.userInfo.openId,
+          group_key: that.data.activeKey,
+          open_id: that.data.userInfo.openId,
+          username: that.data.userInfo.nickName,
+          start_time: that.data.startTimeStamp,
+          end_time:that.data.endTimeStamp,
+          teamIndex: that.data.myGroupIndex
         },
         success(result) {
           
-
-          if (result.data.data == null)
+          if (result.data != null && result.data.data != null && result.data.data.msg == "success")
           {
-            var msg = "创建跑团失败";
-            util.showSuccess(msg)
-            console.log(msg)
-            return ;
-          }
-          util.showSuccess('请求成功完成')
-          var group = result.data.data.group
+            var group = result.data.data.group
 
-          if (group!=null || group!= undefined)
-          {
-            console.log("创建跑团成功 ,group:", group)
+            if (group != null || group != undefined) {
+              console.log("创建跑团成功 ,group:", group)
 
-            for (var i = 0; i < group.length; i++) {
-              var item = group[i];
-              group[i].teams = JSON.parse(item.teams);
-              group[i].members = JSON.parse(item.members);
+              for (var i = 0; i < group.length; i++) {
+                var item = group[i];
+                group[i].teams = JSON.parse(item.teams);
+                group[i].members = JSON.parse(item.members);
+              }
+
+              userDataManager.SetTeamInfo(group);
+              
+              that.setData({
+                startTimeStamp: userDataManager.m_teamInfo[0].start_time,
+                endTimeStamp: userDataManager.m_teamInfo[0].end_time,
+                hasTeam: true
+              })
+
+              util.showSuccess('请求成功完成');
+
+            } else {
+              console.log("创建跑团失败 ,group:", group)
             }
-
-            userDataManager.SetTeamInfo(group);
-          }else{
-            console.log("创建跑团失败 ,group:", group)
+          }
+          else
+          {
+            util.showModel('创建跑团失败', result.data.data.msg);
           }
         },
         fail(error) {
@@ -312,24 +461,27 @@ Page({
     },
 updateUI:function()
 {
+  
   this.setData({
     activeKey: userDataManager.GetActiveKey(),
     isGroup: userDataManager.IsGroup(),
+    startTime: this.data.startTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.startTimeStamp * 1000),
+    endTime: this.data.endTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.endTimeStamp * 1000),
     myGroupIndex: userDataManager.GetMyTeamIndex()
   });
   console.log("myGroupIndex:", this.data.myGroupIndex)
 }
-    ,
+,
   doDownloadUserData:function(e)
   {
-    console.log(this.data.userInfo)
+    //console.log(this.data.userInfo)
 
     console.log("更新数据 跑团的key:",this.data.activeKey)
 
     var that = this;
     wx.request({
 
-      url: config.service.getMyGroupInfo,
+      url: config.service.findTeam,
       data:{
         group_key: this.data.activeKey,
         open_id: this.data.userInfo.openId,
@@ -351,8 +503,20 @@ updateUI:function()
 
           userDataManager.SetTeamInfo(group);
 
+          console.log(userDataManager.m_teamInfo[0].start_time)
+
+          that.setData({
+            startTimeStamp: userDataManager.m_teamInfo[0].start_time,
+            endTimeStamp: userDataManager.m_teamInfo[0].end_time,
+            hasTeam: true
+          })
+
           that.updateUI();
 
+          wx.showToast({
+            icon:'success',
+            title: '更新成功',
+          })
         }else{
           util.showModel('请求失败', response.data.data.msg);
         }

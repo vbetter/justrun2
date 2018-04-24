@@ -57,9 +57,9 @@ var m_teamInfo =
 //获取队伍信息
 function GetTeamByTeamIndex(teamIndex) {
 
-  if (m_teamInfo != null && m_teamInfo.length>0)
+  if (this.m_teamInfo != null && this.m_teamInfo.length>0)
   {
-    var teams = m_teamInfo[0].teams;
+    var teams = this.m_teamInfo[0].teams;
     if (teams != null || teams != undefined) {
       for (let i = 0; i < teams.length; i++) {
         var item = teams[i];
@@ -76,16 +76,16 @@ function GetTeamByTeamIndex(teamIndex) {
 //获取所有队伍的信息
 function GetTeamInfo() 
 {
-  if (m_teamInfo == null || m_teamInfo.length<=0)
+  if (this.m_teamInfo == null || this.m_teamInfo.length<=0)
   return null;
 
-  var teamInfo = m_teamInfo[0].teams
+  var teamInfo = this.m_teamInfo[0].teams
 
   if (teamInfo!=null && teamInfo.length >0)
   {
     var newTeamInfo = [];
 
-    var members = m_teamInfo[0].members
+    var members = this.m_teamInfo[0].members
     var timestamp = Date.parse(new Date());
     var toDayMD = timeUtil.GetMD(timestamp);
 
@@ -99,9 +99,17 @@ function GetTeamInfo()
      var todayMaxName ="";//今日王者是谁
      var todayMaxDistance =0;//今日王者总公里数
 
+     console.log("members length:", members.length)
+
      for (var j = 0; j < members.length ;j++)
      {
         var jmember = members[j];
+
+        if (iTeamInfo.teamIndex == jmember.teamIndex) {
+          totalPeople++;
+
+        }
+        
         for (var s = 0; s < jmember.record.length;s++)
         {
           var srecord = jmember.record[s];
@@ -109,8 +117,6 @@ function GetTeamInfo()
 
           if (iTeamInfo.teamIndex == jmember.teamIndex)
           {
-            totalPeople++;
-
             if (toDayMD == sdayMD) {
               totalDistance = totalDistance + srecord.distance;
               if (srecord.distance >= 3) {
@@ -142,7 +148,7 @@ function GetTeamInfo()
 //设置我的分组
 function SetMyTeamIndex(value) {
 
-  m_myInfo.MyTeamIndex = value;
+  this.m_myInfo.MyTeamIndex = value;
 }
 
 function GetMyTeamIndex()
@@ -165,31 +171,31 @@ function IsGroup()
 
 function ActiveMiniContent()
 {
-  if (m_teamInfo == null || m_teamInfo.length <= 0)
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
     return null;
 
-  return m_teamInfo[0].activeMiniContent;
+  return this.m_teamInfo[0].activeMiniContent;
 }
 
 function ActiveTitle() {
-  if (m_teamInfo == null || m_teamInfo.length <= 0)
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
     return null;
 
-  return m_teamInfo[0].activeTitle;
+  return this.m_teamInfo[0].activeTitle;
 }
 
 function ActiveContent()
 {
-  if (m_teamInfo == null || m_teamInfo.length <= 0)
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
     return null;
 
-  return m_teamInfo[0].activeContent;
+  return this.m_teamInfo[0].activeContent;
 }
 
 //获取今日的打卡组信息
 function GetGroupTodayInfo(groupIndex)
 {
-  if (m_teamInfo == null || m_teamInfo.length <= 0)
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
     return null;
 
   var timestamp = Date.parse(new Date());
@@ -199,9 +205,9 @@ function GetGroupTodayInfo(groupIndex)
 
    var list =[];
 
-   for(var i=0 ;i<m_teamInfo[0].members.length;i++)
+   for (var i = 0; i < this.m_teamInfo[0].members.length;i++)
    {
-     var item = m_teamInfo[0].members[i];
+     var item = this.m_teamInfo[0].members[i];
      if (groupIndex == item.teamIndex)
      {
        var newItem = {};
@@ -231,8 +237,13 @@ var m_curSelectGroup =0;
 
 //获取我的今日打卡信息
 function GetTodayMyPunch() {
-  if (m_teamInfo == null || m_teamInfo.length <= 0)
+  
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
+  {
+    console.log("m_teamInfo is null");
+
     return null;
+  }
     
   var timestamp = Date.parse(new Date());
   var toDayMD = timeUtil.GetMD(timestamp);
@@ -241,7 +252,7 @@ function GetTodayMyPunch() {
 
   //console.log("m_myInfo.openid:", m_myInfo.open_id);
 
-  var myMember = m_teamInfo[0].members
+  var myMember = this.m_teamInfo[0].members
   if (myMember!=null)
   {
     //console.log("GetTodayMyPunch-myMember:", myMember)
@@ -271,10 +282,10 @@ function GetTodayMyPunch() {
 
 function GetMyAllRecords()
 {
-  if (m_teamInfo == null || m_teamInfo.length <= 0)
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
     return null;
 
-  var myMember = m_teamInfo[0].members
+  var myMember = this.m_teamInfo[0].members
   if (myMember != null) 
   {
     //console.log("GetTodayMyPunch-myMember:", myMember)
@@ -292,12 +303,13 @@ function GetMyAllRecords()
 
 function SetTeamInfo(e)
 {
-  m_teamInfo = e;
+  this.m_teamInfo = e;
+
 }
 
 function SetUserInfo(e)
 {
-  m_myInfo.open_id = e.openId;
+  this.m_myInfo.open_id = e.openId;
 
 }
 

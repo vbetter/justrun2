@@ -28,11 +28,13 @@ var config = {
         testSet: `${host}/weapp/testSet`,
         testGet: `${host}/weapp/testGet`,
         //创建跑团
-        createGroup: `${host}/weapp/createGroup`,
+        createTeam: `${host}/weapp/createTeam`,
+        //加入跑团
+        joinTeam: `${host}/weapp/joinTeam`,
         //打卡
         punch: `${host}/weapp/punch`,
         // 拉取跑团信息
-        getMyGroupInfo: `${host}/weapp/getMyGroupInfo`,
+        findTeam: `${host}/weapp/findTeam`,
         // 上传图片接口
         uploadUrl: `${host}/weapp/upload`
     }

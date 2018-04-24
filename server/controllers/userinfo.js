@@ -37,78 +37,78 @@ async function punch(ctx, next)
     var cur_timestamp = Date.parse(cur_date)
     if (cur_timestamp >= start_timestamp && cur_timestamp <= end_timestamp)
     {
+      console.log("=====> res:", res);
+      var members = JSON.parse(res[0].members);
 
-    }
-    else
-    {
-      console.log("不在活动区间内 start_timestamp : %c end_timestamp：%c cur_timestamp：%c",start_timestamp,end_timestamp,cur_timestamp);
-    }
+      var found = null;
+      for (var i = 0; i < members.length; i++) {
+        var item = members[i];
+        console.log("item.openid:", item.openid)
 
-    console.log("=====> res:", res);
-    var members = JSON.parse(res[0].members);
-    
-    var found = null;
-    for (var i = 0; i < members.length;i++)
-    {
-      var item = members[i];
-      console.log("item.openid:", item.openid)
-
-      if(item.openid == openid)
-      {
-        found = item;
-        break;
-      }
-    }
-
-    console.log("=====>found:", found);
-
-    if (found == null) 
-    {
-      console.log("-----fail,没有找到用户")
-
-      ctx.state.data =
-        {
-          msg: 'fail,没有找到用户'
-        }
-    }
-    else
-    {
-      
-      //打卡
-      var record = found.record;
-      console.log("打卡:", record)
-      
-      var foundRecordItem = null;
-      
-      for (var j = 0; j < record.length; j++) {
-        var item = record[j];
-        if (item.time == todayMD) {
-          foundRecordItem = item;
+        if (item.openid == openid) {
+          found = item;
           break;
         }
       }
 
-      if(foundRecordItem == null)
-      {
-        console.log("======>没有打卡，创建一个新记录", members)
-          //如果没有找到,创建一个
-        var newRecordItem = {
-          "time": utils.GetYMD(timestamp),
-          "timestamp": timestamp,
-          "distance": parseFloat(tdistance)
-        }
-        record.push(newRecordItem)
-      }
-      
-      console.log("======>members:", members)
+      console.log("=====>found:", found);
 
-      await mysql("TeamData").update('members', JSON.stringify(members))
+      if (found == null) {
+        console.log("-----fail,没有找到用户")
+
+        ctx.state.data =
+          {
+            msg: 'fail,没有找到用户'
+          }
+      }
+      else {
+
+        //打卡
+        var record = found.record;
+        console.log("打卡:", record)
+
+        var foundRecordItem = null;
+
+        for (var j = 0; j < record.length; j++) {
+          var item = record[j];
+          if (item.time == todayMD) {
+            foundRecordItem = item;
+            break;
+          }
+        }
+
+        if (foundRecordItem == null) {
+          console.log("======>没有打卡，创建一个新记录", members)
+          //如果没有找到,创建一个
+          var newRecordItem = {
+            "time": utils.GetYMD(timestamp),
+            "timestamp": timestamp,
+            "distance": parseFloat(tdistance)
+          }
+          record.push(newRecordItem)
+        }
+
+        console.log("======>members:", members)
+
+        await mysql("TeamData").update('members', JSON.stringify(members))
+
+        ctx.state.data =
+          {
+            msg: 'success'
+          }
+      }
+    }
+    else
+    {
+      console.log("不在活动区间内 start_timestamp : %c end_timestamp：%c cur_timestamp：%c",start_timestamp,end_timestamp,cur_timestamp);
 
       ctx.state.data =
         {
-          msg: 'success'
+        msg: '不在活动区间内'
         }
     }
+
+    
 
   }
 }
