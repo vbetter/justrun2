@@ -1,6 +1,6 @@
 <!--index.wxml-->
-<view class="container">
 
+<view class="page__bd">
 
     <!-- 用户登录测试 -->
     <view class="userinfo" bindtap="login">
@@ -16,19 +16,24 @@
         </view>
     </view>
 
-</view>
+<!-- 我的记录-->
+   <view class="uploader"  wx:if="{{hasTeam}}">
+        <view class="uploader-text" bindtap="doMyRecord">
+            <text>我的记录</text>
+        </view>
+    </view>
 
-<view class="page__bd">
-    <view class="weui-cells__title">跑团信息</view>
-    <view class="weui-cells weui-cells_after-title">
+<view class="weui-panel weui-panel_access ">
+    <view class="weui-panel__hd" >跑团信息</view>
+    <view class="weui-panel__bd">
 
             <view class="weui-cell weui-cell_input">
                 <view class="weui-cell__hd">
                     <view class="weui-label">我的跑团</view>
                 </view>
                 <view class="weui-cell__bd">
-                    <input class="weui-input" bindinput="bindKeyInput_teamKey" placeholder="请输入key" value= "{{activeKey}}"/>
-                </view>
+                    <input class="weui-input" disabled = "{{hasTeam&&myAuthority<=1}}" color = "#888888" bindinput="bindKeyInput_teamKey" placeholder="请输入key" value= "{{activeKey}}"/>
+              </view>
             </view>
 
             <view class="weui-cell weui-cell_input">
@@ -48,7 +53,7 @@
                     <view class="weui-label">开始日期</view>
                 </view>
                 <view class="weui-cell__bd">
-                    <picker mode="date" value="{{date}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_start">
+                    <picker mode="date" value="{{date}}" disabled = "{{hasTeam&&myAuthority<=1}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_start">
                         <view class="weui-input">{{startTime}}</view>
                     </picker>
                 </view>
@@ -59,12 +64,23 @@
                     <view class="weui-label">结束日期</view>
                 </view>
                 <view class="weui-cell__bd">
-                    <picker mode="date" value="{{date}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_end">
+                    <picker mode="date" value="{{date}}" disabled = "{{hasTeam&&myAuthority<=1}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_end">
                         <view class="weui-input">{{endTime}}</view>
                     </picker>
                 </view>
             </view>
     </view>
+
+</view>
+
+        <view class=" page__bd_spacing" wx:if="{{hasTeam}}">
+               <view class="button-sp-area">
+            <button class="weui-btn mini-btn" type="warn" bindtap="leaveTeam" size="mini">退出</button>
+            <button class="weui-btn mini-btn" type="default" bindtap="doDownloadUserData" size="mini">更新</button>
+            <button class="weui-btn mini-btn" type="primary" bindtap="doUploadUserData" size="mini">修改</button>
+            
+        </view>
+        </view>
 
         <view class="weui-btn-area"  wx:if="{{!hasTeam}}">
             <button class="weui-btn" type="primary" bindtap="joinTeam">加入跑团</button>
@@ -74,6 +90,13 @@
             <button class="weui-btn" type="warn" bindtap="createTeam">创建跑团</button>
         </view>
 
+    <!-- 更新数据 
+    <view class="uploader" wx:if="{{hasTeam}}">
+        <view class="uploader-text" bindtap="doDownloadUserData">
+            <text>更新数据</text>
+        </view>
+    </view>
+-->
 </view>
 
 
@@ -114,26 +137,14 @@
     </view>
 -->
 
-<!-- 我的记录-->
-   <view class="uploader"  wx:if="{{hasTeam}}">
-        <view class="uploader-text" bindtap="doMyRecord">
-            <text>我的记录</text>
-        </view>
-    </view>
-
-    <!-- 上传数据 -->
+    <!-- 上传数据 
     <view class="uploader" wx:if="{{hasTeam}}">
         <view class="uploader-text" bindtap="doUploadUserData">
             <text>上传数据</text>
         </view>
     </view>
+-->
 
-    <!-- 更新数据 -->
-    <view class="uploader" wx:if="{{hasTeam}}">
-        <view class="uploader-text" bindtap="doDownloadUserData">
-            <text>更新数据</text>
-        </view>
-    </view>
        <!-- 
     <view class="uploader">
         <view class="uploader-text" bindtap="testAdd">

@@ -7,12 +7,9 @@ async function punch(ctx, next)
   var openid = ctx.query.open_id
   var tgroup_key = ctx.query.group_key
   var tdistance = ctx.query.distance
-  var tpunchDate = ctx.query.punch_date  
-
-  var timestamp = Date.parse(new Date());
-  var todayMD = utils.GetYMD(timestamp);
-  console.log("todayMD:",todayMD);
-  console.log("ctx.query:",ctx.query)
+  
+  var punch_timestamp = ctx.query.punch_timestamp
+  var tpunchDate = utils.GetYMD(punch_timestamp * 1000);//转换成格式:2018-04-25
 
   //先查询有没有这个跑团
   var res = await mysql("TeamData").where('group_key', tgroup_key)
@@ -33,9 +30,8 @@ async function punch(ctx, next)
     //检测打卡时间是否在活动区间
     var start_timestamp = parseInt(res[0].start_time);
     var end_timestamp = parseInt(res[0].end_time);
-    var cur_date = new Date(tpunchDate);
-    var cur_timestamp = Date.parse(cur_date)
-    if (cur_timestamp >= start_timestamp && cur_timestamp <= end_timestamp)
+    
+    if (punch_timestamp >= start_timestamp && punch_timestamp <= end_timestamp)
     {
       console.log("=====> res:", res);
       var members = JSON.parse(res[0].members);
@@ -58,7 +54,7 @@ async function punch(ctx, next)
 
         ctx.state.data =
           {
-            msg: 'fail,没有找到用户'
+            msg: '用户不存在'
           }
       }
       else {
@@ -71,7 +67,7 @@ async function punch(ctx, next)
 
         for (var j = 0; j < record.length; j++) {
           var item = record[j];
-          if (item.time == todayMD) {
+          if (item.time == tpunchDate) {
             foundRecordItem = item;
             break;
           }
@@ -81,26 +77,31 @@ async function punch(ctx, next)
           console.log("======>没有打卡，创建一个新记录", members)
           //如果没有找到,创建一个
           var newRecordItem = {
-            "time": utils.GetYMD(timestamp),
-            "timestamp": timestamp,
+            "time": tpunchDate,
+            "timestamp": punch_timestamp,
             "distance": parseFloat(tdistance)
           }
           record.push(newRecordItem)
+        }else{
+          foundRecordItem.timestamp = punch_timestamp
+          foundRecordItem.distance = parseFloat(tdistance)
         }
 
         console.log("======>members:", members)
 
-        await mysql("TeamData").update('members', JSON.stringify(members))
+        await mysql("TeamData").where('group_key', tgroup_key).update('members', JSON.stringify(members))
 
-        ctx.state.data =
-          {
-            msg: 'success'
-          }
+        //查询
+        var res = await mysql("TeamData").where('group_key', tgroup_key)
+
+        ctx.state.data = {}
+        ctx.state.data.group = res;
+        ctx.state.data.msg = "success";
       }
     }
     else
     {
-      console.log("不在活动区间内 start_timestamp : %c end_timestamp：%c cur_timestamp：%c",start_timestamp,end_timestamp,cur_timestamp);
+      console.log("不在活动区间内 start_timestamp : %c end_timestamp：%c punch_timestamp：%c", start_timestamp, end_timestamp, punch_timestamp);
 
       ctx.state.data =
         {

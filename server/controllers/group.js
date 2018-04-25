@@ -181,7 +181,7 @@ async function joinTeam(ctx, next) {
 
 module.exports =
   {
-    createGroup,
+    createTeam,
     joinTeam,
-    getMyGroupInfo
+    findTeam
   }

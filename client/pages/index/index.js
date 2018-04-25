@@ -20,6 +20,7 @@ Page({
         endTimeStamp:0,
         isGroup: false, //是否分组createKey
         hasTeam:false,//是否加入跑团
+        myAuthority:0,//我的权限
         myGroupIndex:1 //我的分组号
     },
     onLoad: function () 
@@ -239,7 +240,8 @@ Page({
     },
     bindDateChange_start:function(e)
     {
-      var timestamp = timeUtil.GetTimestampByYMD(e.detail.value);
+      var tValue = e.detail.value + " 00:00:00"
+      var timestamp = timeUtil.GetTimestampByYMD(tValue);
       console.log(timestamp);
 
       this.setData(
@@ -252,7 +254,8 @@ Page({
     },
     bindDateChange_end:function(e)
     {
-      var timestamp = timeUtil.GetTimestampByYMD(e.detail.value);
+      var tValue = e.detail.value + " 00:00:00"
+      var timestamp = timeUtil.GetTimestampByYMD(tValue);
       console.log(timestamp);
 
       this.setData(
@@ -271,7 +274,7 @@ Page({
         return;
       }
 
-      if (this.data.userInfo == null) {
+      if (this.data.userInfo == null || this.data.userInfo.openId == null) {
         util.showModel('请求失败', '无效用户信息');
       }
 
@@ -340,14 +343,13 @@ Page({
         return;
       }
 
+      if (this.data.userInfo == null || this.data.userInfo.openId == null) {
+        util.showModel('请求失败', '无效用户信息');
+      }
+
       if (this.data.startTimeStamp == 0 || this.data.endTimeStamp == 0 || this.data.startTimeStamp >= this.data.endTimeStamp) {
         util.showModel('请求失败', '无效的时间');
         return;
-      }
-
-      if (this.data.userInfo == null)
-      {
-        util.showModel('请求失败', '无效用户信息');
       }
 
       //创建一个跑团
@@ -422,6 +424,10 @@ Page({
         isGroup: e.detail.value
       })
     },
+    leaveTeam:function()
+    {
+
+    },
     //上传用户数据
     doUploadUserData:function()
     {
@@ -461,10 +467,15 @@ Page({
     },
 updateUI:function()
 {
-  
+  var myInfo = userDataManager.GetMyInfo();
+  var authority = myInfo != null && myInfo.Authority!=null ? myInfo.Authority:0;
+
+  console.log("authority", authority);
+
   this.setData({
     activeKey: userDataManager.GetActiveKey(),
     isGroup: userDataManager.IsGroup(),
+    myAuthority: authority,
     startTime: this.data.startTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.startTimeStamp * 1000),
     endTime: this.data.endTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.endTimeStamp * 1000),
     myGroupIndex: userDataManager.GetMyTeamIndex()

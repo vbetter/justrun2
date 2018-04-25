@@ -86,8 +86,7 @@ function GetTeamInfo()
     var newTeamInfo = [];
 
     var members = this.m_teamInfo[0].members
-    var timestamp = Date.parse(new Date());
-    var toDayMD = timeUtil.GetMD(timestamp);
+    var toDayMD = timeUtil.GetTodayMD();
 
   for(var i=0 ;i<teamInfo.length;i++)
   {
@@ -98,6 +97,7 @@ function GetTeamInfo()
      var totalCompletions =0;//总完成数
      var todayMaxName ="";//今日王者是谁
      var todayMaxDistance =0;//今日王者总公里数
+     var todayTotalDistance =0;//今日总公里数
 
      console.log("members length:", members.length)
 
@@ -113,12 +113,15 @@ function GetTeamInfo()
         for (var s = 0; s < jmember.record.length;s++)
         {
           var srecord = jmember.record[s];
-          var sdayMD = timeUtil.GetMD(srecord.timestamp);
+          var sdayMD = timeUtil.GetMD(srecord.timestamp * 1000);
 
           if (iTeamInfo.teamIndex == jmember.teamIndex)
           {
+
+            totalDistance = totalDistance + srecord.distance;
+
             if (toDayMD == sdayMD) {
-              totalDistance = totalDistance + srecord.distance;
+              todayTotalDistance = todayTotalDistance + srecord.distance;
               if (srecord.distance >= 3) {
                 totalCompletions++;
 
@@ -133,6 +136,7 @@ function GetTeamInfo()
         }
      }
      iTeamInfo.totalDistance = totalDistance;  //总公里数
+     iTeamInfo.todayTotalDistance = todayTotalDistance;  //今日总公里数
      iTeamInfo.totalPeople = totalPeople; //总人数
      iTeamInfo.totalCompletions = totalCompletions;//总完成人数
      iTeamInfo.todayMaxName = todayMaxName;
@@ -198,8 +202,7 @@ function GetGroupTodayInfo(groupIndex)
   if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
     return null;
 
-  var timestamp = Date.parse(new Date());
-  var toDayMD = timeUtil.GetMD(timestamp);
+  var toDayMD = timeUtil.GetTodayMD();
   //console.log("toDayMD:", toDayMD)
   //var myMember = this.GetTeamByTeamIndex(groupIndex);
 
@@ -216,7 +219,7 @@ function GetGroupTodayInfo(groupIndex)
        newItem.distance = 0;
        for (var j = 0; j < item.record.length; j++) {
          var jItem = item.record[j];
-         var jdayMD = timeUtil.GetMD(jItem.timestamp);
+         var jdayMD = timeUtil.GetMD(jItem.timestamp*1000);
          //console.log("jdayMD:", jdayMD)
          if (toDayMD == jdayMD) {
            console.log("jItem.distance:", jItem.distance)
@@ -232,6 +235,41 @@ function GetGroupTodayInfo(groupIndex)
    return list;
 }
 
+//获取我的信息
+function GetMyInfo()
+{
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0) {
+    console.log("m_teamInfo is null");
+
+    return null;
+  }
+
+  if (this.m_myInfo == null || this.m_myInfo.open_id == 0 || this.m_myInfo.open_id == null)
+  {
+    console.log("m_myInfo is null");
+    return null;
+  }
+
+
+  var myMember = this.m_teamInfo[0].members
+  if (myMember != null) {
+    //console.log("GetTodayMyPunch-myMember:", myMember)
+
+    for (var i = 0; i < myMember.length; i++) {
+      var item = myMember[i];
+
+      //console.log("item.record:", item.record)
+      if (item.openid == m_myInfo.open_id) {
+        return item;
+      }
+    }
+  } else {
+    console.log("GetTodayMyPunch-myMember is null")
+  }
+
+  return null;
+}
+
 //当前选择的组
 var m_curSelectGroup =0;
 
@@ -244,9 +282,13 @@ function GetTodayMyPunch() {
 
     return null;
   }
-    
-  var timestamp = Date.parse(new Date());
-  var toDayMD = timeUtil.GetMD(timestamp);
+
+  if (this.m_myInfo == null || this.m_myInfo.open_id == 0 || this.m_myInfo.open_id == null) {
+    console.log("m_myInfo is null");
+    return null;
+  }
+
+  var toDayMD = timeUtil.GetTodayMD();
 
   var myPunch = { distance:0};
 
@@ -264,7 +306,7 @@ function GetTodayMyPunch() {
       if (item.openid == m_myInfo.open_id) {
         for (var j = 0; j < item.record.length; j++) {
           var jItem = item.record[j];
-          var jdayMD = timeUtil.GetMD(jItem.timestamp);
+          var jdayMD = timeUtil.GetMD(jItem.timestamp*1000);
           //console.log("jdayMD:", jdayMD, "  toDayMD:", toDayMD)
           if (toDayMD == jdayMD) {
             //console.log("jItem.distance:", jItem.distance)
@@ -315,6 +357,7 @@ function SetUserInfo(e)
 
 module.exports =
   {
+  GetMyInfo: GetMyInfo,
   GetMyAllRecords: GetMyAllRecords,
   SetUserInfo: SetUserInfo,
   m_teamInfo,

@@ -19,12 +19,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var myRecord = userDataManager.GetMyAllRecords();
-    console.log(myRecord)
-    this.setData({
-    
-      list : myRecord == null ? [] : myRecord
-    })
+
   },
   onClickItem: function (e) {
 
@@ -43,7 +38,12 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+    var myRecord = userDataManager.GetMyAllRecords();
+    console.log("record-myRecord:",myRecord)
+    this.setData({
+
+      list: myRecord == null ? [] : myRecord
+    })
   },
 
   /**

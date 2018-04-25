@@ -7,7 +7,7 @@ page {
 }
 
 .userinfo, .uploader, .tunnel,.setGroup {
-    margin-top: 40rpx;
+    margin-top: 20rpx;
     height: 140rpx;
     width: 100%;
     background: #FFF;
@@ -123,5 +123,18 @@ page {
     word-break: break-all;
 }
 
+.weui-label 
+{
+    color: #888888;
+}
+
+.button-sp-area{
+    text-align: center;
+}
+
+.mini-btn{
+    
+    margin-right: 20px;
+}
 
 

@@ -13,6 +13,7 @@ Page({
    */
   data: {
     distance:"",
+    isShowEnterBtn:true,
     date: "2018-04-01"
   },
   bindKeyInput: function (e) {
@@ -25,6 +26,11 @@ Page({
   {
 
     var distanceFloat =0;
+    var tValue = this.data.date
+    var tpunchTimestamp = timeUtil.GetTimestampByYMD(tValue);
+
+    console.log("tValue:", tValue)
+    console.log("tpunchTimestamp:", tpunchTimestamp)
 
     if (this.data.distance != null)
     {
@@ -42,20 +48,38 @@ Page({
         data: {
           group_key: userDataManager.m_myInfo.ActiveKey,
           open_id: userDataManager.m_myInfo.open_id,
-          punch_date: this.data.date,
+          punch_timestamp: tpunchTimestamp,
           distance: distanceFloat
         },
-        success(response) {
-          console.log(response)
-          if (response!=null && response.data != null && response.data.data != null && response.data.data.msg == "success") {
-            util.showSuccess('请求成功完成')
-            console.log('request success', response.data.data.msg)
+        success(result) {
 
-            //需要刷新本地数据
-          }else{
-            util.showModel('请求失败', that.data.date);
+          if (result != null && result.data != null && result.data.data != null && result.data.data.msg == "success") {
+            var group = result.data.data.group;
+            console.log("更新本地数据:", group)
+
+            if (group != null) {
+              for (var i = 0; i < group.length; i++) {
+                var item = group[i];
+                group[i].teams = JSON.parse(item.teams);
+                group[i].members = JSON.parse(item.members);
+              }
+              //需要刷新本地数据
+              userDataManager.SetTeamInfo(group);
+
+              that.setData({
+                isShowEnterBtn: false
+              })
+
+              util.showSuccess('请求成功完成')
+              console.log('request success', group)
+            } else {
+              util.showModel('请求失败', "result.data.data.group is null");
+            }
+
+
+          } else {
+            util.showModel('请求失败', result.data.data.msg);
           }
-
         },
         fail(error) {
           util.showModel('请求失败', error);
@@ -80,9 +104,10 @@ Page({
    */
   onLoad: function (options) 
   {
-      console.log(options.time)
+    console.log("options:", options)
       
       this.setData({
+        distance: options.distance.toString(),
         date: options.time.toString()
       })
   },
@@ -102,7 +127,9 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+    this.setData({
+      isShowEnterBtn: true
+    })
   },
 
   /**

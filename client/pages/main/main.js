@@ -20,7 +20,6 @@ Page({
     activeTitle:''
 
   },
-
   /**
    * 生命周期函数--监听页面加载
    */
@@ -60,21 +59,15 @@ Page({
   onReady: function () {
   
   },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-    
+  updateUI:function() {
     var myPunch = userDataManager.GetTodayMyPunch();
-
+    console.log("myPunch:",myPunch)
     var isPunch = false;
-    var myDistanceStr ="";
-    if (myPunch ==null)
-    {
-      isPunch= true;
+    var myDistanceStr = "";
+    if (myPunch == null) {
+      isPunch = true;
       myDistanceStr = "数据异常，重新拉取数据";
-    }else{
+    } else {
       isPunch = myPunch.distance >= 3 ? true : false;
       myDistanceStr = isPunch ? "已跑步 " + myPunch.distance + " 公里" : this.data.inputValue;
     }
@@ -88,6 +81,12 @@ Page({
     })
 
     console.log("list:", this.data.list)
+  },
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+     this.updateUI();
   },
 
   /**
@@ -155,16 +154,38 @@ Page({
         data: {
           group_key: userDataManager.m_myInfo.ActiveKey,
           open_id: userDataManager.m_myInfo.open_id,
-          punch_date: timeUtil.GetTodayMD(),
+          punch_timestamp: timeUtil.GetTimeStamp(),
           distance: myDistanceValue
         },
-        success(result) {
-          util.showSuccess('请求成功完成')
-          console.log('url:', config.service.punch)
-          console.log('request success', result)
-          
-          //需要刷新本地数据
+        success(result) 
+        {
+          if (result != null && result.data != null && result.data.data != null && result.data.data.msg == "success") 
+          {
+            var group = result.data.data.group;
+            console.log("更新本地数据:", group)
 
+            if(group!=null)
+            {
+              for (var i = 0; i < group.length; i++) {
+                var item = group[i];
+                group[i].teams = JSON.parse(item.teams);
+                group[i].members = JSON.parse(item.members);
+              }
+              //需要刷新本地数据
+              userDataManager.SetTeamInfo(group);
+              that.updateUI();
+
+              util.showSuccess('请求成功完成')
+              console.log('request success', group)
+            }else{
+              util.showModel('请求失败', "result.data.data.group is null");
+            }
+
+            
+          } else {
+            util.showModel('请求失败', result.data.data.msg);
+          }
+          
         },
         fail(error) {
           util.showModel('请求失败', error);
