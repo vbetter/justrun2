@@ -69,7 +69,7 @@ Page({
       myDistanceStr = "数据异常，重新拉取数据";
     } else {
       isPunch = myPunch.distance >= 3 ? true : false;
-      myDistanceStr = isPunch ? "已跑步 " + myPunch.distance + " 公里" : this.data.inputValue;
+      myDistanceStr = isPunch ? "已跑步 " + myPunch.distance + " 公里" : "未打卡，点我弹出键盘";
     }
 
     this.setData({

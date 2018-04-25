@@ -34,8 +34,12 @@ router.post('/message', controllers.message.post)
 // --- 客服消息接口 业务逻辑 --- //
 //创建跑团
 router.get('/createTeam', controllers.group.createTeam)
+//离开跑团
+router.get('/leaveTeam', controllers.group.leaveTeam)
 //加入跑团
 router.get('/joinTeam', controllers.group.joinTeam)
+//修改跑团数据
+router.get('/reviseTeam', controllers.group.reviseTeam)
 //拉取跑团信息
 router.get('/findTeam', controllers.group.findTeam)
 //打卡

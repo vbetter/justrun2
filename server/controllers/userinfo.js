@@ -11,6 +11,15 @@ async function punch(ctx, next)
   var punch_timestamp = ctx.query.punch_timestamp
   var tpunchDate = utils.GetYMD(punch_timestamp * 1000);//转换成格式:2018-04-25
 
+  if (openid == null || tgroup_key == null || tdistance == null || punch_timestamp == null || tpunchDate == null)
+  {
+    ctx.state.data =
+      {
+        msg: '上报参数错误'
+      }
+      return;
+  }
+
   //先查询有没有这个跑团
   var res = await mysql("TeamData").where('group_key', tgroup_key)
 

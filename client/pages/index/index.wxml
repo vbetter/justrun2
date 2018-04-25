@@ -32,7 +32,7 @@
                     <view class="weui-label">我的跑团</view>
                 </view>
                 <view class="weui-cell__bd">
-                    <input class="weui-input" disabled = "{{hasTeam&&myAuthority<=1}}" color = "#888888" bindinput="bindKeyInput_teamKey" placeholder="请输入key" value= "{{activeKey}}"/>
+                    <input class="weui-input" disabled = "{{hasTeam}}" color = "#888888" bindinput="bindKeyInput_teamKey" placeholder="请输入key" value= "{{activeKey}}"/>
               </view>
             </view>
 
@@ -69,6 +69,14 @@
                     </picker>
                 </view>
             </view>
+
+            <view class="weui-panel__ft" wx:if="{{hasTeam}}">
+                <view class="weui-cell weui-cell_access weui-cell_link" bindtap="onClickActiveContent">
+                    <view class="weui-cell__bd">活动详情</view>
+                    <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+                </view>
+            </view>
+
     </view>
 
 </view>
@@ -76,8 +84,8 @@
         <view class=" page__bd_spacing" wx:if="{{hasTeam}}">
                <view class="button-sp-area">
             <button class="weui-btn mini-btn" type="warn" bindtap="leaveTeam" size="mini">退出</button>
-            <button class="weui-btn mini-btn" type="default" bindtap="doDownloadUserData" size="mini">更新</button>
-            <button class="weui-btn mini-btn" type="primary" bindtap="doUploadUserData" size="mini">修改</button>
+            <button class="weui-btn mini-btn" type="primary" bindtap="findTeam" size="mini">刷新</button>
+            <button class="weui-btn mini-btn" wx:if="{{myAuthority==9}}" type="warn" bindtap="reviseTeam" size="mini">修改</button>
             
         </view>
         </view>

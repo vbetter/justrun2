@@ -424,29 +424,96 @@ Page({
         isGroup: e.detail.value
       })
     },
+    //离开跑团
     leaveTeam:function()
-    {
-
-    },
-    //上传用户数据
-    doUploadUserData:function()
     {
       console.log("上传用户数据")
 
       util.showBusy('请求中...')
       var that = this
       var options = {
-        url: config.service.uploadUserDataUrl,
+        url: config.service.leaveTeam,
         login: true,
+        data: {
+          group_key: this.data.activeKey,
+          open_id: this.data.userInfo.openId,
+        },
         success(result) {
-          util.showSuccess('请求成功完成')
-          console.log('url:', config.service.uploadUserDataUrl)
-          console.log('request success', result)
-          that.setData({
-            requestResult: JSON.stringify(result.data)
-          })
-          //需要刷新本地数据
+          if (result.data != null && result.data.data != null && result.data.data.msg == "success")
+          {
 
+            userDataManager.SetTeamInfo(null);
+
+            that.setData({
+              hasTeam: false
+            })
+
+            that.updateUI();
+
+            util.showSuccess('请求成功完成')
+          }
+          else
+          {
+            util.showModel('请求失败', result.data.data.msg);
+          }
+        },
+        fail(error) {
+          util.showModel('请求失败', error);
+          console.log('request fail', error);
+        }
+      }
+      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
+        qcloud.request(options)
+      } else {    // 使用 wx.request 则不带登录态
+        wx.request(options)
+      }
+    },
+    //修改跑团数据
+    reviseTeam:function()
+    {
+      console.log("修改用户数据")
+
+      util.showBusy('请求中...')
+      var that = this
+      var options = {
+        url: config.service.reviseTeam,
+        login: true,
+        data: {
+          group_key: that.data.activeKey,
+          open_id: that.data.userInfo.openId,
+          start_time: that.data.startTimeStamp,
+          end_time: that.data.endTimeStamp,
+          activeContent: ""
+        },
+        success(result) {
+          if (result.data != null && result.data.data != null && result.data.data.msg == "success") 
+          {
+
+            var group = result.data.data.group
+
+            if (group != null || group != undefined) {
+              console.log("修改用户数据成功 ,group:", group)
+
+              for (var i = 0; i < group.length; i++) {
+                var item = group[i];
+                group[i].teams = JSON.parse(item.teams);
+                group[i].members = JSON.parse(item.members);
+              }
+
+              userDataManager.SetTeamInfo(group);
+
+              that.setData({
+                startTimeStamp: userDataManager.m_teamInfo[0].start_time,
+                endTimeStamp: userDataManager.m_teamInfo[0].end_time,
+                hasTeam: true
+              })
+
+              util.showSuccess('请求成功完成');
+            }
+          }
+          else {
+            util.showModel('请求失败', result.data.data.msg);
+          }
         },
         fail(error) {
           util.showModel('请求失败', error);
@@ -483,7 +550,16 @@ updateUI:function()
   console.log("myGroupIndex:", this.data.myGroupIndex)
 }
 ,
-  doDownloadUserData:function(e)
+onClickActiveContent:function(e)
+{
+  console.log("onClickActiveContent")
+
+  wx.navigateTo({
+    url: '../../pages/rule/rule'
+  })
+
+},
+findTeam:function(e)
   {
     //console.log(this.data.userInfo)
 
