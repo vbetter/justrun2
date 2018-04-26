@@ -1,6 +1,59 @@
 const { mysql } = require('../qcloud')
 var utils = require('../tools/Utils.js')
 
+//修改我的分组
+async function reviseTeamIndex(ctx, next)
+{
+  var openid = ctx.query.open_id
+  var tgroup_key = ctx.query.group_key
+  var teamIndex = ctx.query.teamIndex
+  if (openid == null || tgroup_key == null || teamIndex == null || teamIndex ==0)
+  {
+    ctx.state.data =
+      {
+        msg: '上报参数错误'
+      }
+    return;
+  }
+
+  //先查询有没有这个跑团
+  var res = await mysql("TeamData").where('group_key', tgroup_key)
+  if (res != null && res.length>0)
+  {
+    var members = JSON.parse(res[0].members);
+    if (members!=null)
+    {
+      var found = null;
+      for (var i = 0; i < members.length; i++) {
+        var item = members[i];
+        if (item.openid == openid) {
+          found = item;
+          break;
+        }
+      }
+
+      if (found!=null)
+      {
+        found.teamIndex = teamIndex;
+        var mysqlResult = await mysql("TeamData").where('group_key', tgroup_key).update('members', JSON.stringify(members))
+
+        console.log(mysqlResult)
+
+        ctx.state.data =
+          {
+            msg: 'success'
+          }
+          return;
+      }
+    }
+  }
+
+  ctx.state.data =
+    {
+      msg: '异常错误'
+    }
+}
+
 //打卡
 async function punch(ctx, next) 
 {
@@ -125,5 +178,6 @@ async function punch(ctx, next)
 
 module.exports =
   {
+    reviseTeamIndex,
     punch
   }

@@ -6,7 +6,8 @@
     "pages/rule/rule",
     "pages/group/group",
     "pages/record/record",
-    "pages/myInfo/myInfo"
+    "pages/myInfo/myInfo",
+    "pages/createTeam/createTeam"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",

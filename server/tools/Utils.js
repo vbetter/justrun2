@@ -12,6 +12,13 @@ function JsonIsNull(value) {
   return false;
 };
 
+function GetTimeStamp() {
+  var timestamp = Date.parse(new Date());
+  timestamp = timestamp / 1000;
+  console.log("当前时间戳为：" + timestamp);
+  return timestamp;
+}
+
 //获取月日字符串
 function GetYMD(timestamp) {
   var date = new Date(timestamp);
@@ -46,6 +53,7 @@ function GetTodayYMD() {
 
 module.exports =
   {
+    GetTimeStamp: GetTimeStamp,
     GetYMD: GetYMD,
     GetTodayYMD: GetTodayYMD,
     JsonIsNull: JsonIsNull

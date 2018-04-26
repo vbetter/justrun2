@@ -1,1 +1,6 @@
 /* pages/rule/rule.wxss */
+
+.weui-label 
+{
+    color: #888888;
+}

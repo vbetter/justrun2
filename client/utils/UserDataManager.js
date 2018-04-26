@@ -4,6 +4,7 @@ var m_myInfo =
 {
     MyTeamIndex: 1, //我的分组编号，0:未分组  1:1组，2:2组
     ActiveKey :"Test001", //由发起者申请，发给每个组员
+    nickname:"",
     open_id:0 //我的openid
 }
 
@@ -18,7 +19,6 @@ var m_teamInfo =
       "create_time":"20180402",//创建日期
       "start_time":"1525104000",//活动开始时间
       "end_time":"1525104000",//活动结束时间
-      "activeTitle":'30天约跑',//主界面标题
       "activeMiniContent" : '4月1日正式开启我们的第二期，第一天望大家都能完成，加油',
      "activeContent" : '分组比赛，比赛规则如下： \n  1. 所有人分成两组 \n 2. 每组一位组长，组长负责每天激励组员跑步，要负责每天汇报本组的跑步情况，管理员负责最后的统计。组长有一个特权，就是可以获得一张免死金牌，可以一次不跑的机会，可以给自己用，也可以给其他人用，这个记录不计入后期输赢的判定  \n  3. 每一组的组长则需要记录两个数字，一为多少人缺席，二为每一天自己组的总公里数； \n 4. 女生生理期三天不算入最后的评分，也不需要罚款  \n 5. 如何判定胜负，到30号那一天哪一组没跑的次数最多的为负方，如果双方没跑的次数一样，则按照所有人跑的总公里数来判定，少的为负方 \n 6. 改为当天打卡，不强迫一定早上跑，不管刮风下雨，自己小组决定要不要跑，反正不跑的要贡献50当作活动经费  \n 7. 负方需要负责第二期线下活动的统筹包括费用支出，活动经费赞助一半',
       "members":
@@ -74,7 +74,7 @@ function GetTeamByTeamIndex(teamIndex) {
 }
 
 //获取所有队伍的信息
-function GetTeamInfo() 
+function GetAllTeamsInfo() 
 {
   if (this.m_teamInfo == null || this.m_teamInfo.length<=0)
   return null;
@@ -150,50 +150,37 @@ function GetTeamInfo()
 }
 
 //设置我的分组
-function SetMyTeamIndex(value) {
+function SetMyTeamIndex(value) 
+{
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
+    return;
+
+  if (value == null || value ==0)
+  return;
 
   this.m_myInfo.MyTeamIndex = value;
-}
+  //修改结构体里面数据
+  var myMember = this.m_teamInfo[0].members
+  if (myMember != null) {
+    //console.log("GetTodayMyPunch-myMember:", myMember)
 
-function GetMyTeamIndex()
-{
-  return m_myInfo.MyTeamIndex;
-}
+    for (var i = 0; i < myMember.length; i++) {
+      var item = myMember[i];
 
-function GetActiveKey()
-{
-  return m_myInfo["ActiveKey"];// m_teamInfo[0].group_key;
+      //console.log("item.record:", item.record)
+      if (item.openid == m_myInfo.open_id) {
+        item.teamIndex = value;
+      }
+    }
+  } 
 }
 
 function IsGroup()
 {
-  if (m_myInfo.MyTeamIndex==0)
+  if (this.m_myInfo.MyTeamIndex==0)
   {return false;}
 
   return true
-}
-
-function ActiveMiniContent()
-{
-  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
-    return null;
-
-  return this.m_teamInfo[0].activeMiniContent;
-}
-
-function ActiveTitle() {
-  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
-    return null;
-
-  return this.m_teamInfo[0].activeTitle;
-}
-
-function ActiveContent()
-{
-  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
-    return null;
-
-  return this.m_teamInfo[0].activeContent;
 }
 
 //获取今日的打卡组信息
@@ -234,6 +221,8 @@ function GetGroupTodayInfo(groupIndex)
 
    return list;
 }
+
+
 
 //获取我的信息
 function GetMyInfo()
@@ -347,16 +336,99 @@ function SetTeamInfo(e)
 {
   this.m_teamInfo = e;
 
+  if (this.GetTeamInfo()!=null)
+  {
+    this.m_myInfo.ActiveKey = this.GetTeamInfo().group_key
+    if (this.GetMyInfo()!=null)this.m_myInfo.MyTeamIndex = this.GetMyInfo().teamIndex
+  }
+    
 }
 
 function SetUserInfo(e)
 {
-  this.m_myInfo.open_id = e.openId;
+  console.log("SetUserInfo:", e);
 
+  if (e.nickName!=null)this.m_myInfo.nickname = e.nickName
+  if (e.openId!=null)this.m_myInfo.open_id = e.openId;
+
+}
+
+function GetTeamInfo()
+{
+  if (this.m_teamInfo == null || this.m_teamInfo.length==0)
+  return null;
+
+  return this.m_teamInfo[0]
+}
+
+function GetTeamLeadInfo()
+{
+  if (this.m_teamInfo == null || this.m_teamInfo.length == 0)
+    return null;
+
+  var creator_openid = this.m_teamInfo[0].creator_openid;
+  if (creator_openid!=null)
+  {
+    var myMember = this.m_teamInfo[0].members
+    if (myMember != null) {
+      //console.log("GetTodayMyPunch-myMember:", myMember)
+
+      for (var i = 0; i < myMember.length; i++) {
+        var item = myMember[i];
+
+        //console.log("item.record:", item.record)
+        if (item.openid == creator_openid) {
+          return item;
+        }
+      }
+    }
+  }
+  
+  return null;
+}
+
+function SetMyInfo(e)
+{
+    if(e!=null)
+    {
+      if (e.group_key!=null)this.m_myInfo.ActiveKey = e.group_key
+      if (e.teamIndex != null)this.m_myInfo.MyTeamIndex = e.teamIndex
+    }
+}
+
+//缓存数据
+function SaveMyInfo()
+{
+  var myInfoJason = {};
+  myInfoJason.group_key = this.m_myInfo.ActiveKey
+  myInfoJason.teamIndex = this.m_myInfo.MyTeamIndex
+
+  wx.setStorage({
+    key: 'MyInfo',
+    data: JSON.stringify(myInfoJason),
+  })
+}
+
+//是否能请求无服务器
+function IsEnableRequestServer()
+{
+  if(m_myInfo!=null)
+  {
+    if (m_myInfo.open_id!=null && m_myInfo.open_id!=0)
+    {
+      return true;
+    }
+  }
+  return false
 }
 
 module.exports =
   {
+  IsEnableRequestServer: IsEnableRequestServer,
+  SaveMyInfo:SaveMyInfo,
+  SetMyInfo: SetMyInfo,
+  GetTeamLeadInfo:GetTeamLeadInfo,
+  GetTeamInfo: GetTeamInfo,
   GetMyInfo: GetMyInfo,
   GetMyAllRecords: GetMyAllRecords,
   SetUserInfo: SetUserInfo,
@@ -366,13 +438,8 @@ module.exports =
     GetTodayMyPunch: GetTodayMyPunch,
     GetGroupTodayInfo: GetGroupTodayInfo,
     SetMyTeamIndex:SetMyTeamIndex,
-    GetTeamInfo:GetTeamInfo,
+    GetAllTeamsInfo: GetAllTeamsInfo,
     GetTeamByTeamIndex:GetTeamByTeamIndex,
-    ActiveMiniContent:ActiveMiniContent,
     IsGroup: IsGroup,
-    GetActiveKey: GetActiveKey,
-    GetMyTeamIndex:GetMyTeamIndex,
-    ActiveTitle:ActiveTitle,
-    ActiveContent:ActiveContent,
     m_curSelectGroup,
   }

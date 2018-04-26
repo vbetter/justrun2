@@ -11,10 +11,9 @@ var config = {
     service: {
         host,
 
-        // 登录地址，用于建立会话
+        //登录地址，用于建立会话
         loginUrl: `${host}/weapp/login`,
-
-        // 测试的请求地址，用于测试会话
+        //测试的请求地址，用于测试会话
         requestUrl: `${host}/weapp/user`,
         //创建跑团
         createTeam: `${host}/weapp/createTeam`,
@@ -24,8 +23,10 @@ var config = {
         leaveTeam: `${host}/weapp/leaveTeam`,
         //修改跑团数据
         reviseTeam: `${host}/weapp/reviseTeam`,
-        // 拉取跑团信息
+        //拉取跑团信息
         findTeam: `${host}/weapp/findTeam`,
+        //修改我的队伍分组
+        reviseTeamIndex: `${host}/weapp/reviseTeamIndex`,
         //打卡
         punch: `${host}/weapp/punch`,
     }

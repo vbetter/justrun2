@@ -58,7 +58,15 @@ function GetAuthorityString(value)
     return str;
 }
 
+function isEmptyString(obj) {
+  if (typeof obj == "undefined" || obj == null || obj == "") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 module.exports = 
 {
-   formatTime, showBusy, showSuccess, showModel 
-   }
+   isEmptyString,formatTime, showBusy, showSuccess, showModel 
+}

@@ -44,10 +44,8 @@ router.get('/reviseTeam', controllers.group.reviseTeam)
 router.get('/findTeam', controllers.group.findTeam)
 //打卡
 router.get('/punch', controllers.userinfo.punch)
-
-//上报我的跑步信息
-
-//上报我的分组信息
+//修改我的分组信息
+router.get('/reviseTeamIndex', controllers.userinfo.reviseTeamIndex)
 
 //test测试helloworld
 router.get('/testDelete',controllers.demo.testDelete)

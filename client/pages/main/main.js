@@ -15,10 +15,7 @@ Page({
     inputValue: '未打卡，点我弹出键盘',
     inputValue2:"",
     isPunch: false,
-    list: [],
-    activeContent:'',
-    activeTitle:''
-
+    list: []
   },
   /**
    * 生命周期函数--监听页面加载
@@ -69,15 +66,13 @@ Page({
       myDistanceStr = "数据异常，重新拉取数据";
     } else {
       isPunch = myPunch.distance >= 3 ? true : false;
-      myDistanceStr = isPunch ? "已跑步 " + myPunch.distance + " 公里" : "未打卡，点我弹出键盘";
+      myDistanceStr = isPunch ? "已跑步 " + myPunch.distance + " 公里" : "";
     }
 
     this.setData({
-      inputValue: myDistanceStr,
+      inputValue2: myDistanceStr,
       isPunch: isPunch,
-      list: userDataManager.GetTeamInfo(),
-      activeContent: userDataManager.ActiveMiniContent(),
-      activeTitle: userDataManager.ActiveTitle()
+      list: userDataManager.GetAllTeamsInfo()
     })
 
     console.log("list:", this.data.list)

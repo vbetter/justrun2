@@ -35,14 +35,20 @@ Page({
       var toDayMD = timeUtil.GetTodayMD();
 
       wx.setNavigationBarTitle({
-        title: toDayMD + '打卡',
+        title: toDayMD,
       })
     }
   },
-  onClickItem: function (e) {
+  onClickItem: function (e) 
+  {
+    console.log("onClickItem:",e);
+    
+    //"../../pages/myInfo/myInfo?time={{item.time}}&timestamp={{item.timestamp}}&distance={{item.distance}}"
+    /*
     wx.navigateTo({
-      url: '../../pages/record/record'
+      url: '../../pages/myInfo/myInfo'
     })
+    */
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

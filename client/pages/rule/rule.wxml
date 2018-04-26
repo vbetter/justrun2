@@ -1,8 +1,113 @@
 <!--pages/rule/rule.wxml-->
-<view class="page">
+<view class="page" wx:if="{{!isEditorMode}}">
  <view class="page__hd">
-        <view class="page__title">{{activeTitle}}</view>
-        <text class="page__desc" word-break = "break-word" word-wrap="break-all">{{activeContent}}</text>
+        <view class="page__title">30天约跑</view>
+        <text class="page__desc"  word-break = "break-word" word-wrap="break-all">{{activeContent}}</text>
+        
     </view>
-    
+
+        <view class="weui-form-preview">
+            <view class="weui-form-preview__hd">
+                <view class="weui-form-preview__label">跑团名</view>
+                <view class="weui-form-preview__value_in-hd">{{team_name}}</view>
+            </view>
+            <view class="weui-form-preview__bd">
+
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">团长</view>
+                    <view class="weui-form-preview__value">{{team_lead}}</view>
+                </view>
+
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">跑团KEY</view>
+                    <view class="weui-form-preview__value">{{group_key}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">创建时间</view>
+                    <view class="weui-form-preview__value">{{create_time}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">开始时间</view>
+                    <view class="weui-form-preview__value">{{start_time}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">结束时间</view>
+                    <view class="weui-form-preview__value">{{end_time}}</view>
+                </view>
+            </view>
+            <view class="weui-form-preview__ft">
+                <view class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active"
+                bindtap="onClickEditor">编辑</view>
+            </view>
+        </view>
+
 </view>
+
+
+<view class="page_editor" wx:if="{{isEditorMode}}">
+
+<view class="page__hd">
+        <view class="page__title">编辑模式</view>
+    </view>
+
+
+<view class="weui-panel weui-panel_access ">
+
+<view class="weui-panel__bd">
+
+
+           <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">跑团名</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <input class="weui-input" placeholder="请输入跑团名" bindinput='bindKeyInput_teamName' value='{{team_name}}'/>
+                </view>
+            </view>
+
+
+            <view class="weui-cell weui-cell_input" >
+            
+                <view class="weui-cell__hd">
+                    <view class="weui-label">开始日期</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <picker mode="date" value="{{start_time}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_start">
+                        <view class="weui-input">{{start_time}}</view>
+                    </picker>
+                </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input" >
+                <view class="weui-cell__hd">
+                    <view class="weui-label">结束日期</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <picker mode="date" value="{{end_time}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_end">
+                        <view class="weui-input">{{end_time}}</view>
+                    </picker>
+                </view>
+            </view>
+</view>
+</view>
+
+    <view class="page__bd">
+
+
+        <view class="weui-cells__title">活动规则</view>
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">
+                    <textarea class="weui-textarea" placeholder="请输入活动规则,1000字以内" bindinput='bindKeyInput_activeContent' value='{{activeContent}}' style="height: 3.3em" maxlength = "1000" />
+                    <view class="weui-textarea-counter">0/1000</view>
+                </view>
+            </view>
+        </view>
+    </view>
+
+        <view class="weui-btn-area">
+            <button class="weui-btn" type="primary" bindtap="onClickEditorDone">确定</button>
+        </view>
+
+
+</view> 

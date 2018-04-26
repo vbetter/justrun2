@@ -1,0 +1,85 @@
+<!--pages/createTeam/createTeam.wxml-->
+<view class="page__hd">
+        <view class="page__title">创建跑团</view>
+    </view>
+
+
+<view class="weui-panel weui-panel_access ">
+
+<view class="weui-panel__bd">
+
+
+           <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">跑团名</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <input class="weui-input" value='{{team_name}}' bindinput='bindKeyInput_teamName' placeholder="请输入跑团名"/>
+                </view>
+            </view>
+
+
+            <view class="weui-cell weui-cell_input" >
+            
+                <view class="weui-cell__hd">
+                    <view class="weui-label">开始日期</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <picker mode="date" value="{{start_time_date}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_start">
+                        <view class="weui-input">{{start_time_date}}</view>
+                    </picker>
+                </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input" >
+                <view class="weui-cell__hd">
+                    <view class="weui-label">结束日期</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <picker mode="date" value="{{end_time_date}}"  start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_end">
+                        <view class="weui-input">{{end_time_date}}</view>
+                    </picker>
+                </view>
+            </view>
+
+             <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">我的分组</view>
+                </view>
+                <view class="weui-cell__bd">
+                <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+                        <view class="weui-input">{{myGroupIndex}}组</view>
+                    </picker>
+                </view>
+            </view>
+</view>
+</view>
+
+    <view class="page__bd">
+
+
+        <view class="weui-cells__title">跑团Key</view>
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__bd">
+                    <input class="weui-input" value='{{group_key}}' bindinput='bindKeyInput_teamKey' placeholder="请输入key" />
+                </view>
+            </view>
+        </view>
+
+
+        <view class="weui-cells__title">活动规则</view>
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">
+                    <textarea class="weui-textarea" value='{{activeContent}}' bindinput='bindKeyInput_activeContent' placeholder="请输入活动规则,1000字以内" style="height: 3.3em" maxlength = "1000" />
+                    <view class="weui-textarea-counter">0/1000</view>
+                </view>
+            </view>
+        </view>
+
+
+         <view class="weui-btn-area">
+            <button class="weui-btn" type="primary" bindtap="onClickCreate">确定</button>
+        </view>
+    </view>

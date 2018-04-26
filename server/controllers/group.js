@@ -30,14 +30,16 @@ async function leaveTeam(ctx,next)
   if (openid == res[0].creator_openid)
   {
     // 删
-    await mysql("TeamData").del().where('group_key', tgroup_key)
-
-    ctx.state.data =
-      {
-        msg: 'success'
-      }
-
-    return;
+    var mysqlResult = await mysql("TeamData").del().where('group_key', tgroup_key)
+    console.log("mysqlResult:", mysqlResult)
+    if (mysqlResult==1)
+    {
+      ctx.state.data =
+        {
+          msg: 'success'
+        }
+      return;
+    }
   }
   else
   {
@@ -87,8 +89,12 @@ async function createTeam(ctx,next)
   var endTime = ctx.query.end_time
   var username = ctx.query.username
   var teamIndex = ctx.query.teamIndex
+  var team_name = ctx.query.team_name
+  var activeContent = ctx.query.activeContent
 
-  if (openid == null || tgroup_key == null || startTime == null || endTime == null || username == null || teamIndex ==null) {
+  if (openid == null || tgroup_key == null || startTime == null || endTime == null || username == null || teamIndex ==null
+    || startTime == 0 || endTime == 0
+  ) {
     ctx.state.data =
       {
         msg: '上报参数错误'
@@ -106,10 +112,11 @@ async function createTeam(ctx,next)
       {
       msg: '跑团已存在!'
       }
+      return;
   }else{
-    var curdate = new Date();
-    var timestamp = Date.parse(curdate)
-
+    
+    var create_time = utils.GetTimeStamp();
+    
     var teams = 
       [{
         "teamContent": "累计跑步100公里",
@@ -144,12 +151,11 @@ async function createTeam(ctx,next)
       }
     newItem.group_key = tgroup_key;
     newItem.creator_openid = openid
-    newItem.create_time = timestamp;
+    newItem.create_time = create_time;
     newItem.start_time = startTime;
     newItem.end_time = endTime;
-    newItem.activeTitle = "30天约跑";
-    newItem.activeMiniContent = "活动简要";
-    newItem.activeContent = '分组比赛，比赛规则如下： \n  1. 所有人分成两组 \n 2. 每组一位组长，组长负责每天激励组员跑步，要负责每天汇报本组的跑步情况，管理员负责最后的统计。组长有一个特权，就是可以获得一张免死金牌，可以一次不跑的机会，可以给自己用，也可以给其他人用，这个记录不计入后期输赢的判定  \n  3. 每一组的组长则需要记录两个数字，一为多少人缺席，二为每一天自己组的总公里数； \n 4. 女生生理期三天不算入最后的评分，也不需要罚款  \n 5. 如何判定胜负，到30号那一天哪一组没跑的次数最多的为负方，如果双方没跑的次数一样，则按照所有人跑的总公里数来判定，少的为负方 \n 6. 改为当天打卡，不强迫一定早上跑，不管刮风下雨，自己小组决定要不要跑，反正不跑的要贡献50当作活动经费  \n 7. 负方需要负责第二期线下活动的统筹包括费用支出，活动经费赞助一半';
+    newItem.team_name = team_name;
+    newItem.activeContent = activeContent;
     newItem.teams = JSON.stringify(teams);
     newItem.members = JSON.stringify(members);
     
@@ -165,7 +171,14 @@ async function createTeam(ctx,next)
     ctx.state.data = {}
     ctx.state.data.group = res;
     ctx.state.data.msg = "success";
+
+    return;
   }
+
+  ctx.state.data =
+    {
+      msg: '数据异常'
+    }
 }
 
 //查找跑团信息
@@ -196,8 +209,12 @@ async function findTeam(ctx, next) {
     ctx.state.data = {};
     ctx.state.data.group = res;
     ctx.state.data.msg = "success";
+    return;
   }
-
+  ctx.state.data =
+    {
+      msg: '数据异常'
+    }
 }
 
 //加入跑团
@@ -297,8 +314,9 @@ async function reviseTeam(ctx, next) {
   var startTime = ctx.query.start_time
   var endTime = ctx.query.end_time
   var activeContent = ctx.query.activeContent
+  var team_name = ctx.query.team_name
 
-  if (openid == null || tgroup_key == null || startTime == null || endTime == null) {
+  if (openid == null || tgroup_key == null || startTime == null || endTime == null || team_name == null || activeContent ==null) {
     ctx.state.data =
       {
         msg: '上报参数错误'
@@ -321,13 +339,16 @@ async function reviseTeam(ctx, next) {
   
   if (openid == res[0].creator_openid)
   {
-    await mysql("TeamData").where('group_key', tgroup_key).update(
+     var requestResult= await mysql("TeamData").where('group_key', tgroup_key).update(
       {
-        'start_time': startTime, 
-        "end_time": endTime, 
-        "activeContent": activeContent
+        start_time: startTime, 
+        end_time: endTime, 
+        team_name: team_name,
+        activeContent: activeContent
       }
     )
+
+     console.log("requestResult:", requestResult);
 
     //查询
     var res2 = await mysql("TeamData").where('group_key', tgroup_key)

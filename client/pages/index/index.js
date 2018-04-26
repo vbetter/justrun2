@@ -23,22 +23,20 @@ Page({
         myAuthority:0,//我的权限
         myGroupIndex:1 //我的分组号
     },
+    onShow:function()
+    {
+      this.updateUI();
+    },
     onLoad: function () 
     {
       //var date = new Date('2018-02-21');
       //console.log(date)
 
-      console.log("local teaminfo:",userDataManager.m_teamInfo)
-
-
-    wx.setNavigationBarTitle({
-      title: '个人设置',
-    })
-     
-     this.updateUI();
-
       // 页面渲染后 执行
-      
+      wx.setNavigationBarTitle({
+        title: '个人设置',
+      })
+
       this.login();
     },
     // 用户登录示例
@@ -54,13 +52,21 @@ Page({
         // 调用登录接口
         qcloud.login({
             success(result) {
-                if (result) {
+                if (result) 
+                {
+
+                  console.log("登录成功1:",result);
+
                   userDataManager.SetUserInfo(result);
 
                     util.showSuccess('登录成功')
                     that.setData({
                         userInfo: result,
                         logged: true
+                    })
+
+                    wx.reLaunch({
+                      url: '../../pages/index/index',
                     })
                 } else {
                     // 如果不是首次登录，不会返回用户信息，请求用户信息接口获取
@@ -74,7 +80,7 @@ Page({
                             util.showSuccess('登录失败')
                           } else
                           {
-                            console.log('登录成功:', result.data.data)
+                            console.log('登录成功2:', result.data.data)
                             util.showSuccess('登录成功')
                             that.setData({
                               userInfo: result.data.data,
@@ -83,7 +89,21 @@ Page({
                             userDataManager.SetUserInfo(result.data.data);
 
                             //拉取跑团数据
+                            wx.getStorage({
+                              key: 'MyInfo',
+                              success: function(res) {
+                                console.log("getStorage:res:",res.data);
 
+                                var myInfoJason = JSON.parse(res.data);
+                                userDataManager.SetMyInfo(myInfoJason);
+
+                                that.setData({
+                                  myGroupIndex: myInfoJason.teamIndex,
+                                  activeKey: myInfoJason.group_key
+                                })
+                                that.findTeam();
+                              },
+                            })
                           } 
 
                         },
@@ -107,9 +127,56 @@ Page({
     bindPickerChange: function (e) {
       var index = parseInt ( e.detail.value) +1;
       console.log('picker发送选择改变，携带值为', index)
-      this.setData({
-        myGroupIndex: index
-      })
+
+      if(index!=this.data.myGroupIndex)
+      {
+        this.setData({
+          myGroupIndex: index
+        })
+
+        this.requestSetMyGoupIndex(index);
+      }
+    },
+    //上报我的分组信息
+    requestSetMyGoupIndex:function(e)
+    {
+
+      if (userDataManager.GetTeamInfo()==null)
+      {
+        return;
+      }
+
+      util.showBusy('请求中...')
+      var that = this
+      var options = {
+        url: config.service.reviseTeamIndex,
+        login: true,
+        data: {
+          group_key: that.data.activeKey,
+          open_id: that.data.userInfo.openId,
+          teamIndex:e
+        },
+        success(result) {
+          if (result.data != null && result.data.data != null && result.data.data.msg == "success") 
+          {
+            userDataManager.SetMyTeamIndex(that.data.myGroupIndex)
+
+            util.showSuccess('请求成功完成');
+          }
+          else {
+            util.showModel('请求失败', result.data.data.msg);
+          }
+        },
+        fail(error) {
+          util.showModel('请求失败', error);
+          console.log('request fail', error);
+        }
+      }
+      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
+        qcloud.request(options)
+      } else {    // 使用 wx.request 则不带登录态
+        wx.request(options)
+      }
     },
     /*
     testAdd: function (e) {
@@ -314,6 +381,9 @@ Page({
             })
 
             that.updateUI();
+
+            userDataManager.SaveMyInfo();
+
             util.showSuccess('请求成功完成');
           }
           else
@@ -338,78 +408,15 @@ Page({
 
     createTeam:function(e)
     {
-      if (this.data.activeKey == null) {
-        util.showModel('请求失败', '无效的Key');
+      if (util.isEmptyString(this.data.userInfo))
+      {
+        util.showModel('请求失败', "请先登录")
         return;
       }
 
-      if (this.data.userInfo == null || this.data.userInfo.openId == null) {
-        util.showModel('请求失败', '无效用户信息');
-      }
-
-      if (this.data.startTimeStamp == 0 || this.data.endTimeStamp == 0 || this.data.startTimeStamp >= this.data.endTimeStamp) {
-        util.showModel('请求失败', '无效的时间');
-        return;
-      }
-
-      //创建一个跑团
-      util.showBusy('请求中...')
-      var that = this
-      var options = {
-        url: config.service.createTeam,
-        login: true,
-        data: {
-          group_key: that.data.activeKey,
-          open_id: that.data.userInfo.openId,
-          username: that.data.userInfo.nickName,
-          start_time: that.data.startTimeStamp,
-          end_time:that.data.endTimeStamp,
-          teamIndex: that.data.myGroupIndex
-        },
-        success(result) {
-          
-          if (result.data != null && result.data.data != null && result.data.data.msg == "success")
-          {
-            var group = result.data.data.group
-
-            if (group != null || group != undefined) {
-              console.log("创建跑团成功 ,group:", group)
-
-              for (var i = 0; i < group.length; i++) {
-                var item = group[i];
-                group[i].teams = JSON.parse(item.teams);
-                group[i].members = JSON.parse(item.members);
-              }
-
-              userDataManager.SetTeamInfo(group);
-              
-              that.setData({
-                startTimeStamp: userDataManager.m_teamInfo[0].start_time,
-                endTimeStamp: userDataManager.m_teamInfo[0].end_time,
-                hasTeam: true
-              })
-
-              util.showSuccess('请求成功完成');
-
-            } else {
-              console.log("创建跑团失败 ,group:", group)
-            }
-          }
-          else
-          {
-            util.showModel('创建跑团失败', result.data.data.msg);
-          }
-        },
-        fail(error) {
-          util.showModel('请求失败', error);
-          console.log('request fail', error);
-        }
-      }
-      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
-        qcloud.request(options)
-      } else {    // 使用 wx.request 则不带登录态
-        wx.request(options)
-      }
+      wx.navigateTo({
+        url: '../createTeam/createTeam',
+      })
     },
     // 切换是否带有登录态
     switchRequestMode: function (e) {
@@ -441,14 +448,14 @@ Page({
         success(result) {
           if (result.data != null && result.data.data != null && result.data.data.msg == "success")
           {
-
-            userDataManager.SetTeamInfo(null);
-
-            that.setData({
-              hasTeam: false
-            })
+            that.clearMyInfo();
 
             that.updateUI();
+
+            wx.removeStorage({
+              key: 'MyInfo',
+              success: function(res) {},
+            })
 
             util.showSuccess('请求成功完成')
           }
@@ -468,63 +475,13 @@ Page({
         wx.request(options)
       }
     },
-    //修改跑团数据
-    reviseTeam:function()
+    clearMyInfo:function()
     {
-      console.log("修改用户数据")
+      userDataManager.SetTeamInfo(null);
 
-      util.showBusy('请求中...')
-      var that = this
-      var options = {
-        url: config.service.reviseTeam,
-        login: true,
-        data: {
-          group_key: that.data.activeKey,
-          open_id: that.data.userInfo.openId,
-          start_time: that.data.startTimeStamp,
-          end_time: that.data.endTimeStamp,
-          activeContent: ""
-        },
-        success(result) {
-          if (result.data != null && result.data.data != null && result.data.data.msg == "success") 
-          {
-
-            var group = result.data.data.group
-
-            if (group != null || group != undefined) {
-              console.log("修改用户数据成功 ,group:", group)
-
-              for (var i = 0; i < group.length; i++) {
-                var item = group[i];
-                group[i].teams = JSON.parse(item.teams);
-                group[i].members = JSON.parse(item.members);
-              }
-
-              userDataManager.SetTeamInfo(group);
-
-              that.setData({
-                startTimeStamp: userDataManager.m_teamInfo[0].start_time,
-                endTimeStamp: userDataManager.m_teamInfo[0].end_time,
-                hasTeam: true
-              })
-
-              util.showSuccess('请求成功完成');
-            }
-          }
-          else {
-            util.showModel('请求失败', result.data.data.msg);
-          }
-        },
-        fail(error) {
-          util.showModel('请求失败', error);
-          console.log('request fail', error);
-        }
-      }
-      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
-        qcloud.request(options)
-      } else {    // 使用 wx.request 则不带登录态
-        wx.request(options)
-      }
+      this.setData({
+        hasTeam: false
+      })
     },
     doMyRecord:function(e)
     {
@@ -535,19 +492,24 @@ Page({
 updateUI:function()
 {
   var myInfo = userDataManager.GetMyInfo();
-  var authority = myInfo != null && myInfo.Authority!=null ? myInfo.Authority:0;
 
-  console.log("authority", authority);
+  if (myInfo!=null)
+  {
+    var authority = myInfo != null && myInfo.Authority != null ? myInfo.Authority : 0;
 
-  this.setData({
-    activeKey: userDataManager.GetActiveKey(),
-    isGroup: userDataManager.IsGroup(),
-    myAuthority: authority,
-    startTime: this.data.startTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.startTimeStamp * 1000),
-    endTime: this.data.endTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.endTimeStamp * 1000),
-    myGroupIndex: userDataManager.GetMyTeamIndex()
-  });
-  console.log("myGroupIndex:", this.data.myGroupIndex)
+    console.log("authority", authority);
+
+    this.setData({
+      activeKey: userDataManager.m_myInfo.ActiveKey,
+      isGroup: userDataManager.IsGroup(),
+      myAuthority: authority,
+      startTime: this.data.startTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.startTimeStamp * 1000),
+      endTime: this.data.endTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.endTimeStamp * 1000),
+      hasTeam: userDataManager.GetTeamInfo() == null ? false : true,
+      myGroupIndex: userDataManager.m_myInfo.MyTeamIndex
+    });
+  }
+  
 }
 ,
 onClickActiveContent:function(e)
@@ -559,7 +521,7 @@ onClickActiveContent:function(e)
   })
 
 },
-findTeam:function(e)
+findTeam:function()
   {
     //console.log(this.data.userInfo)
 
@@ -590,7 +552,7 @@ findTeam:function(e)
 
           userDataManager.SetTeamInfo(group);
 
-          console.log(userDataManager.m_teamInfo[0].start_time)
+          //console.log(userDataManager.m_teamInfo[0].start_time)
 
           that.setData({
             startTimeStamp: userDataManager.m_teamInfo[0].start_time,
@@ -606,11 +568,15 @@ findTeam:function(e)
           })
         }else{
           util.showModel('请求失败', response.data.data.msg);
+
+          that.clearMyInfo();
         }
         
       },
       fail: function (err) {
         console.log(err);
+
+        that.clearMyInfo();
       }
     });
   },

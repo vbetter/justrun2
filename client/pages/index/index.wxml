@@ -47,32 +47,10 @@
                 </view>
             </view>
 
-            <view class="weui-cell weui-cell_input" >
-            
-                <view class="weui-cell__hd">
-                    <view class="weui-label">开始日期</view>
-                </view>
-                <view class="weui-cell__bd">
-                    <picker mode="date" value="{{date}}" disabled = "{{hasTeam&&myAuthority<=1}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_start">
-                        <view class="weui-input">{{startTime}}</view>
-                    </picker>
-                </view>
-            </view>
-
-            <view class="weui-cell weui-cell_input" >
-                <view class="weui-cell__hd">
-                    <view class="weui-label">结束日期</view>
-                </view>
-                <view class="weui-cell__bd">
-                    <picker mode="date" value="{{date}}" disabled = "{{hasTeam&&myAuthority<=1}}" start="2018-04-01" end="2018-12-30" bindchange="bindDateChange_end">
-                        <view class="weui-input">{{endTime}}</view>
-                    </picker>
-                </view>
-            </view>
 
             <view class="weui-panel__ft" wx:if="{{hasTeam}}">
                 <view class="weui-cell weui-cell_access weui-cell_link" bindtap="onClickActiveContent">
-                    <view class="weui-cell__bd">活动详情</view>
+                    <view class="weui-cell__bd">跑团详情</view>
                     <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                 </view>
             </view>
@@ -80,15 +58,6 @@
     </view>
 
 </view>
-
-        <view class=" page__bd_spacing" wx:if="{{hasTeam}}">
-               <view class="button-sp-area">
-            <button class="weui-btn mini-btn" type="warn" bindtap="leaveTeam" size="mini">退出</button>
-            <button class="weui-btn mini-btn" type="primary" bindtap="findTeam" size="mini">刷新</button>
-            <button class="weui-btn mini-btn" wx:if="{{myAuthority==9}}" type="warn" bindtap="reviseTeam" size="mini">修改</button>
-            
-        </view>
-        </view>
 
         <view class="weui-btn-area"  wx:if="{{!hasTeam}}">
             <button class="weui-btn" type="primary" bindtap="joinTeam">加入跑团</button>
@@ -98,6 +67,19 @@
             <button class="weui-btn" type="warn" bindtap="createTeam">创建跑团</button>
         </view>
 
+
+   <view class="uploader"  wx:if="{{hasTeam}}">
+        <view class="uploader-text" bindtap="findTeam">
+            <text>刷新数据</text>
+        </view>
+    </view>
+
+
+       <view class="uploader"  wx:if="{{hasTeam}}">
+        <view class="uploader-text" bindtap="leaveTeam">
+            <text>退出跑团</text>
+        </view>
+    </view>
     <!-- 更新数据 
     <view class="uploader" wx:if="{{hasTeam}}">
         <view class="uploader-text" bindtap="doDownloadUserData">
