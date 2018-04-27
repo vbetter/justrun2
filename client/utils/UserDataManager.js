@@ -213,9 +213,8 @@ function GetGroupTodayInfo(groupIndex)
            newItem.distance = jItem.distance;
          }
        }
-       if (newItem.distance > 0) {
-         list.push(newItem)
-       }
+
+       list.push(newItem)
      }
    }
 
