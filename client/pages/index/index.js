@@ -8,8 +8,8 @@ var timeUtil = require('../../utils/TimeUtil.js')
 Page({
     data: {
         enableCreate:false,//能否创建跑团
-        activeKey:'',
-        array: ['1', '2'],
+        team_key:'',
+        array: [1, 2],
         userInfo: {},
         logged: false,
         takeSession: false,
@@ -99,7 +99,7 @@ Page({
 
                                 that.setData({
                                   myGroupIndex: myInfoJason.teamIndex,
-                                  activeKey: myInfoJason.group_key
+                                  team_key: myInfoJason.team_key
                                 })
                                 that.findTeam();
                               },
@@ -141,7 +141,12 @@ Page({
     requestSetMyGoupIndex:function(e)
     {
 
-      if (userDataManager.GetTeamInfo()==null)
+      if (userDataManager.IsEnableRequestServer() == false) {
+        util.showModel('请求失败', "微信登录失败，缺少openid")
+        return;
+      }
+
+      if (this.data.team_key==null)
       {
         return;
       }
@@ -152,9 +157,9 @@ Page({
         url: config.service.reviseTeamIndex,
         login: true,
         data: {
-          group_key: that.data.activeKey,
+          team_key: that.data.team_key,
           open_id: that.data.userInfo.openId,
-          teamIndex:e
+          teamIndex: e
         },
         success(result) {
           if (result.data != null && result.data.data != null && result.data.data.msg == "success") 
@@ -178,164 +183,23 @@ Page({
         wx.request(options)
       }
     },
-    /*
-    testAdd: function (e) {
-      util.showBusy('请求中...')
-      var that = this
-      var options = {
-        url: config.service.testAdd,
-        login: true, 
-        data: {
-          group_key: this.data.activeKey,
-          open_id: this.data.userInfo.openId,
-        },
-        success(result) {
-          util.showSuccess('请求成功完成')
-          that.setData({
-            requestResult: JSON.stringify(result.data)
-          })
-          //需要刷新本地数据
-
-        },
-        fail(error) {
-          util.showModel('请求失败', error);
-          console.log('request fail', error);
-        }
-      }
-      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
-        qcloud.request(options)
-      } else {    // 使用 wx.request 则不带登录态
-        wx.request(options)
-      }
-    },
-    testDelete: function (e) {
-      util.showBusy('请求中...')
-      var that = this
-      var options = {
-        url: config.service.testDelete,
-        login: true,
-        data: {
-          group_key: this.data.activeKey,
-          open_id: this.data.userInfo.openId,
-        },
-        success(result) {
-          util.showSuccess('请求成功完成')
-          that.setData({
-            requestResult: JSON.stringify(result.data)
-          })
-          //需要刷新本地数据
-
-        },
-        fail(error) {
-          util.showModel('请求失败', error);
-          console.log('request fail', error);
-        }
-      }
-      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
-        qcloud.request(options)
-      } else {    // 使用 wx.request 则不带登录态
-        wx.request(options)
-      }
-    },
-    testSet: function (e) {
-      util.showBusy('请求中...')
-      var that = this
-      var options = {
-        url: config.service.testSet,
-        login: true, 
-        data: {
-          group_key: this.data.activeKey,
-          open_id: this.data.userInfo.openId,
-        },
-        success(result) {
-          util.showSuccess('请求成功完成')
-          that.setData({
-            requestResult: JSON.stringify(result.data)
-          })
-          //需要刷新本地数据
-
-        },
-        fail(error) {
-          util.showModel('请求失败', error);
-          console.log('request fail', error);
-        }
-      }
-      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
-        qcloud.request(options)
-      } else {    // 使用 wx.request 则不带登录态
-        wx.request(options)
-      }
-    },
-    testGet: function (e) {
-      util.showBusy('请求中...')
-      var that = this
-      var options = {
-        url: config.service.testGet,
-        login: true, 
-        data: {
-          group_key: this.data.activeKey,
-          open_id: this.data.userInfo.openId,
-        },
-        success(result) {
-          util.showSuccess('请求成功完成')
-          that.setData({
-            requestResult: JSON.stringify(result.data)
-          })
-          //需要刷新本地数据
-
-        },
-        fail(error) {
-          util.showModel('请求失败', error);
-          console.log('request fail', error);
-        }
-      }
-      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
-        qcloud.request(options)
-      } else {    // 使用 wx.request 则不带登录态
-        wx.request(options)
-      }
-    },
-    */
     bindKeyInput_teamKey:function(e)
     {
         console.log(e)
 
         var key = e.detail.value;
         this.setData({
-          activeKey: key
+          team_key: key
         })
-    },
-    bindDateChange_start:function(e)
-    {
-      var tValue = e.detail.value + " 00:00:00"
-      var timestamp = timeUtil.GetTimestampByYMD(tValue);
-      console.log(timestamp);
-
-      this.setData(
-        {
-          startTime: e.detail.value,
-          startTimeStamp:timestamp
-        }
-      )
-      
-    },
-    bindDateChange_end:function(e)
-    {
-      var tValue = e.detail.value + " 00:00:00"
-      var timestamp = timeUtil.GetTimestampByYMD(tValue);
-      console.log(timestamp);
-
-      this.setData(
-        {
-          endTime: e.detail.value,
-          endTimeStamp: timestamp
-        }
-      )
     },
     joinTeam:function(e)
     {
-      //加入跑团
-      if(this.data.activeKey==null)
+      if (userDataManager.IsEnableRequestServer() == false) {
+        util.showModel('请求失败', "微信登录失败，缺少openid")
+        return;
+      }
+
+      if(this.data.team_key==null)
       {
         util.showModel('请求失败', '无效的Key');
         return;
@@ -344,7 +208,6 @@ Page({
       if (this.data.userInfo == null || this.data.userInfo.openId == null) {
         util.showModel('请求失败', '无效用户信息');
       }
-
       
       util.showBusy('请求中...')
       var that = this
@@ -352,7 +215,7 @@ Page({
         url: config.service.joinTeam,
         login: true,
         data: {
-          group_key: that.data.activeKey,
+          team_key: that.data.team_key,
           open_id: that.data.userInfo.openId,
           username: that.data.userInfo.username,
           teamIndex: that.data.myGroupIndex
@@ -408,6 +271,12 @@ Page({
 
     createTeam:function(e)
     {
+
+      if (userDataManager.IsEnableRequestServer() == false) {
+        util.showModel('请求失败', "微信登录失败，缺少openid")
+        return;
+      }
+
       if (util.isEmptyString(this.data.userInfo))
       {
         util.showModel('请求失败', "请先登录")
@@ -434,7 +303,16 @@ Page({
     //离开跑团
     leaveTeam:function()
     {
-      console.log("上传用户数据")
+
+      if (userDataManager.IsEnableRequestServer() == false) {
+        util.showModel('请求失败', "微信登录失败，缺少openid")
+        return;
+      }
+
+      if (this.data.team_key == null) {
+        util.showModel('请求失败', '无效的Key');
+        return;
+      }
 
       util.showBusy('请求中...')
       var that = this
@@ -442,7 +320,7 @@ Page({
         url: config.service.leaveTeam,
         login: true,
         data: {
-          group_key: this.data.activeKey,
+          team_key: this.data.team_key,
           open_id: this.data.userInfo.openId,
         },
         success(result) {
@@ -462,11 +340,15 @@ Page({
           else
           {
             util.showModel('请求失败', result.data.data.msg);
+
+            that.clearMyInfo();
           }
         },
         fail(error) {
           util.showModel('请求失败', error);
           console.log('request fail', error);
+
+          that.clearMyInfo();
         }
       }
       if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
@@ -491,6 +373,22 @@ Page({
     },
 updateUI:function()
 {
+
+  if (userDataManager.m_myInfo!=null)
+  {
+      var list = [];
+      if (userDataManager.m_myInfo.team_count>=1)
+      {
+        for (var i = 0; i < userDataManager.m_myInfo.team_count; i++) {
+          list.push(i+1);
+        }
+
+        this.setData({
+          array: list
+        });
+      }
+  }
+
   var myInfo = userDataManager.GetMyInfo();
 
   if (myInfo!=null)
@@ -500,7 +398,7 @@ updateUI:function()
     console.log("authority", authority);
 
     this.setData({
-      activeKey: userDataManager.m_myInfo.ActiveKey,
+      team_key: userDataManager.m_myInfo.team_key,
       isGroup: userDataManager.IsGroup(),
       myAuthority: authority,
       startTime: this.data.startTimeStamp == 0 ? "" : timeUtil.GetMD(this.data.startTimeStamp * 1000),
@@ -525,14 +423,14 @@ findTeam:function()
   {
     //console.log(this.data.userInfo)
 
-    console.log("更新数据 跑团的key:",this.data.activeKey)
+    console.log("更新数据 跑团的key:",this.data.team_key)
 
     var that = this;
     wx.request({
 
       url: config.service.findTeam,
       data:{
-        group_key: this.data.activeKey,
+        team_key: this.data.team_key,
         open_id: this.data.userInfo.openId,
       },
       success: function (response) {
@@ -569,12 +467,22 @@ findTeam:function()
         }else{
           util.showModel('请求失败', response.data.data.msg);
 
+          wx.removeStorage({
+            key: 'MyInfo',
+            success: function (res) { },
+          })
+
           that.clearMyInfo();
         }
         
       },
       fail: function (err) {
         console.log(err);
+
+        wx.removeStorage({
+          key: 'MyInfo',
+          success: function (res) { },
+        })
 
         that.clearMyInfo();
       }

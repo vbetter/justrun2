@@ -147,7 +147,7 @@ Page({
         url: config.service.punch,
         login: true,
         data: {
-          group_key: userDataManager.m_myInfo.ActiveKey,
+          team_key: userDataManager.m_myInfo.team_key,
           open_id: userDataManager.m_myInfo.open_id,
           punch_timestamp: timeUtil.GetTimeStamp(),
           distance: myDistanceValue

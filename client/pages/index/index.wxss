@@ -20,6 +20,11 @@ page {
     transition: all 300ms ease;
 }
 
+.leavetext
+{
+  color: #e64340;
+}
+
 .userinfo-avatar {
     width: 100rpx;
     height: 100rpx;

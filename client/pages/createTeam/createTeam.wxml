@@ -44,12 +44,12 @@
 
              <view class="weui-cell weui-cell_input">
                 <view class="weui-cell__hd">
-                    <view class="weui-label">我的分组</view>
+                    <view class="weui-label">小组数量</view>
                 </view>
                 <view class="weui-cell__bd">
-                <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
-                        <view class="weui-input">{{myGroupIndex}}组</view>
-                    </picker>
+
+                <input class="weui-input" type="digit" placeholder="2" value = "{{team_count}}" bindinput="bindKeyInput_teamCount"/>
+
                 </view>
             </view>
 </view>
@@ -62,7 +62,7 @@
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell weui-cell_input">
                 <view class="weui-cell__bd">
-                    <input class="weui-input" value='{{group_key}}' bindinput='bindKeyInput_teamKey' placeholder="请输入key" />
+                    <input class="weui-input" value='{{team_key}}' bindinput='bindKeyInput_teamKey' placeholder="请输入key" />
                 </view>
             </view>
         </view>

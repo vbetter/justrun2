@@ -13,11 +13,11 @@ Page({
    * 页面的初始数据
    */
   data: {
-    myGroupIndex: 1, //我的分组号
+    team_count: 1, //我的分组号
     array: ['1', '2'],
     team_name: "",
     
-    group_key: "",
+    team_key: "",
 
     start_time_date:"",
 
@@ -25,23 +25,12 @@ Page({
 
     activeContent: ''
   },
-  bindPickerChange: function (e) {
-    var index = parseInt(e.detail.value) + 1;
-    console.log('picker发送选择改变，携带值为', index)
-
-    if (index != this.data.myGroupIndex) {
-      this.setData({
-        myGroupIndex: index
-      })
-
-    }
-  },
   //点击创建跑团
   onClickCreate:function(e)
   {
     if (userDataManager.IsEnableRequestServer()== false)
     {
-      util.showModel('请求失败', "openid等基础数据获得")
+      util.showModel('请求失败', "微信登录失败，缺少openid")
       return;
     }
 
@@ -56,7 +45,7 @@ Page({
         return;
     }
 
-    if (util.isEmptyString(this.data.group_key))
+    if (util.isEmptyString(this.data.team_key))
     {
       util.showModel('请求失败', "请输入key")
       return;
@@ -72,7 +61,7 @@ Page({
       return;
     }
 
-    if (this.data.myGroupIndex==0 )
+    if (this.data.team_count==0 )
     {
       util.showModel('请求失败', "分组信息错误")
       return;
@@ -91,14 +80,14 @@ Page({
       url: config.service.createTeam,
       login: true,
       data: {
-        group_key: that.data.group_key,
+        team_key: that.data.team_key,
         open_id: userDataManager.m_myInfo.open_id,
         username: userDataManager.m_myInfo.nickname,
         start_time: start_timestamp,
         end_time: end_timestamp,
         activeContent: that.data.activeContent,
         team_name: that.data.team_name,
-        teamIndex: that.data.myGroupIndex
+        team_count: that.data.team_count
       },
       success(result) {
         var msg = result.data != null && result.data.data != null && result.data.data.msg != null ? result.data.data.msg : "Error";
@@ -166,9 +155,19 @@ Page({
       team_name: e.detail.value
     })
   },
+
+  bindKeyInput_teamCount: function (e) {
+
+    var tt = parseInt(e.detail.value)
+    this.setData({
+      team_count: tt
+    })
+
+    userDataManager.m_myInfo.team_count = tt
+  },
   bindKeyInput_teamKey: function (e) {
     this.setData({
-      group_key: e.detail.value
+      team_key: e.detail.value
     })
   },
   bindKeyInput_activeContent: function (e) {
@@ -194,7 +193,20 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+    if (userDataManager.m_myInfo!=null)
+  {
+      var list = [];
+      if (userDataManager.m_myInfo.team_count>=1)
+      {
+        for (var i = 0; i < userDataManager.m_myInfo.team_count; i++) {
+          list.push(i+1);
+        }
+
+        this.setData({
+          array: list
+        });
+      }
+  }
   },
 
   /**

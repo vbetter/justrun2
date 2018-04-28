@@ -20,7 +20,7 @@
 
                 <view class="weui-form-preview__item">
                     <view class="weui-form-preview__label">跑团KEY</view>
-                    <view class="weui-form-preview__value">{{group_key}}</view>
+                    <view class="weui-form-preview__value">{{team_key}}</view>
                 </view>
                 <view class="weui-form-preview__item">
                     <view class="weui-form-preview__label">创建时间</view>

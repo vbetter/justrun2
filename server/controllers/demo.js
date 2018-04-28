@@ -4,9 +4,9 @@ const { mysql } = require('../qcloud')
 //删
 async function testDelete(ctx, next) {
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
   // 删
-  await mysql("TeamData").del().where('group_key', tgroup_key)
+  await mysql("TeamData").del().where('team_key', tteam_key)
 
   const body = ctx.request.body
 
@@ -19,11 +19,11 @@ async function testDelete(ctx, next) {
 //增
 async function testAdd(ctx, next) {
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
 
   var curdate = new Date();
   var timestamp = Date.parse(curdate)
-  var key = group_key
+  var key = team_key
   var teams =
     [{
       teamContent: "累计跑步100公里",
@@ -42,7 +42,7 @@ async function testAdd(ctx, next) {
   var newItem =
     {
     }
-  newItem.group_key = key;
+  newItem.team_key = key;
   newItem.creator_openid = "123"
   newItem.create_time = timestamp;
   newItem.start_time = timestamp;
@@ -78,7 +78,7 @@ async function testSet(ctx, next) {
 //查
 async function testGet(ctx, next) {
 
-  var res = await mysql("TeamData").where('group_key', 'lijing')
+  var res = await mysql("TeamData").where('team_key', 'lijing')
 
   console.log("res,", res)
 
@@ -101,32 +101,32 @@ module.exports =
   console.log(ctx.query.open_id)
 
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
-  console.log("tgroup_key:", tgroup_key)
+  var tteam_key = ctx.query.team_key
+  console.log("tteam_key:", tteam_key)
 
   /*
-  if (tgroup_key != null && tgroup_key!= undefined)
+  if (tteam_key != null && tteam_key!= undefined)
   {
-    var res = mysql("TeamData").select("group_key")
+    var res = mysql("TeamData").select("team_key")
     if (res == null || res == undefined) {
-      console.log("not find key:", tgroup_key)
+      console.log("not find key:", tteam_key)
       var newItem =
         {
-          group_key : tgroup_key,
+          team_key : tteam_key,
         }
       //创建
       mysql("TeamData").insert(newItem)
 
-      res = mysql("TeamData").where({ tgroup_key }).first()
+      res = mysql("TeamData").where({ tteam_key }).first()
     }
   }else{
-    console.log("group_key is null")
+    console.log("team_key is null")
   }
 */
   //console.log("team:",res)
 
 /*
-  var res = await mysql("TeamData").where('group_key','lijing')
+  var res = await mysql("TeamData").where('team_key','lijing')
 
   console.log("res,",res)
 
@@ -147,7 +147,7 @@ module.exports =
       //activeContent:"fdsfdsf",
       //create_time: "21312312"
     }
-  newItem.group_key = key;
+  newItem.team_key = key;
   newItem.creator_openid = "123"
   newItem.start_time = timestamp;
   //创建

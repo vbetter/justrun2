@@ -21,12 +21,12 @@
     "list": [
       {
         "pagePath": "pages/main/main",
-        "iconPath": "res/ic_run.png",
+        "iconPath": "res/ic_run_2.png",
         "selectedIconPath": "res/ic_run.png"
       },
       {
         "pagePath": "pages/index/index",
-        "iconPath": "res/ic_info.png",
+        "iconPath": "res/ic_info_2.png",
         "selectedIconPath": "res/ic_info.png"
       }
     ]

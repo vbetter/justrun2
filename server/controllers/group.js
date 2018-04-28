@@ -5,9 +5,9 @@ var utils  = require('../tools/Utils.js')
 async function leaveTeam(ctx,next)
 {
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
 
-  if (openid == null || tgroup_key == null) {
+  if (openid == null || tteam_key == null) {
     ctx.state.data =
       {
         msg: '上报参数错误'
@@ -16,7 +16,7 @@ async function leaveTeam(ctx,next)
   }
 
   //先查询有没有这个跑团
-  var res = await mysql("TeamData").where('group_key', tgroup_key)
+  var res = await mysql("TeamData").where('team_key', tteam_key)
   if (utils.JsonIsNull(res) == true) {
     console.log("跑团已存在!请换一个key申请！res:", res)
 
@@ -30,7 +30,7 @@ async function leaveTeam(ctx,next)
   if (openid == res[0].creator_openid)
   {
     // 删
-    var mysqlResult = await mysql("TeamData").del().where('group_key', tgroup_key)
+    var mysqlResult = await mysql("TeamData").del().where('team_key', tteam_key)
     console.log("mysqlResult:", mysqlResult)
     if (mysqlResult==1)
     {
@@ -62,7 +62,7 @@ async function leaveTeam(ctx,next)
       {
         found.state = 8;//1：正常   8：离开
 
-        await mysql("TeamData").where('group_key', tgroup_key).update('members', JSON.stringify(members))
+        await mysql("TeamData").where('team_key', tteam_key).update('members', JSON.stringify(members))
 
         ctx.state.data =
           {
@@ -84,15 +84,15 @@ async function leaveTeam(ctx,next)
 async function createTeam(ctx,next)
 {
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
   var startTime = ctx.query.start_time
   var endTime = ctx.query.end_time
   var username = ctx.query.username
-  var teamIndex = ctx.query.teamIndex
+  var team_count = ctx.query.team_count
   var team_name = ctx.query.team_name
   var activeContent = ctx.query.activeContent
 
-  if (openid == null || tgroup_key == null || startTime == null || endTime == null || username == null || teamIndex ==null
+  if (openid == null || tteam_key == null || startTime == null || endTime == null || username == null || team_count ==null
     || startTime == 0 || endTime == 0
   ) {
     ctx.state.data =
@@ -101,9 +101,10 @@ async function createTeam(ctx,next)
       }
     return;
   }
+  if (team_count <= 0) team_count =1;
 
   //先查询有没有这个跑团
-  var res = await mysql("TeamData").where('group_key', tgroup_key)
+  var res = await mysql("TeamData").where('team_key', tteam_key)
   if (utils.JsonIsNull(res) == false)
   {
     console.log("跑团已存在!请换一个key申请！res:",res)
@@ -116,29 +117,23 @@ async function createTeam(ctx,next)
   }else{
     
     var create_time = utils.GetTimeStamp();
-    
-    var teams = 
-      [{
-        "teamContent": "累计跑步100公里",
-        "teamIcon": "../../res/ic_groupRed.png",
-        "teamIndex": "1",
-        "teamName": "1组"
-      },
-      {
-        "teamContent": "累计跑步80公里",
-        "teamIcon": "../../res/ic_groupBlue.png",
-        "teamIndex": "2",
-        "teamName": "2组"
-      }
-      ]
+    var teams =[];
 
-      
+    for (var i = 0; i < team_count;i++)
+    {
+        var tTeamIndex = i+1;
+        var newTeamItem = {};
+        newTeamItem.teamIndex = tTeamIndex;
+        newTeamItem.teamIcon = GetTeamIcon(tTeamIndex);
+        newTeamItem.teamName = tTeamIndex+"组";
+        teams.push(newTeamItem)
+    }
 
     var members = []
     var newItem = {}
     newItem.openid = openid;
     newItem.username = username;
-    newItem.teamIndex = teamIndex;
+    newItem.teamIndex = 1;
     newItem.Authority = "9";//最高权限
     newItem.state = 1;//1：正常   8：离开
     newItem.record = [];
@@ -149,30 +144,36 @@ async function createTeam(ctx,next)
     var newItem =
       {
       }
-    newItem.group_key = tgroup_key;
+    newItem.team_key = tteam_key;
     newItem.creator_openid = openid
-    newItem.create_time = create_time;
+    newItem.team_count = team_count;
     newItem.start_time = startTime;
     newItem.end_time = endTime;
     newItem.team_name = team_name;
     newItem.activeContent = activeContent;
+    newItem.create_time = create_time;
     newItem.teams = JSON.stringify(teams);
     newItem.members = JSON.stringify(members);
     
+
     console.log("====== new item:",newItem)
 
     //创建
     await mysql("TeamData").insert(newItem)
 
+    console.log("====== createResult:")
+
     //查询
-    var res = await mysql("TeamData").where('group_key', tgroup_key)
+    var res = await mysql("TeamData").where('team_key', tteam_key)
     console.log("=======>查询:",res);
 
-    ctx.state.data = {}
-    ctx.state.data.group = res;
-    ctx.state.data.msg = "success";
-
-    return;
+    if (utils.JsonIsNull(res)== false)
+    {
+      ctx.state.data = {}
+      ctx.state.data.group = res;
+      ctx.state.data.msg = "success";
+      return;
+    }
   }
 
   ctx.state.data =
@@ -181,13 +182,34 @@ async function createTeam(ctx,next)
     }
 }
 
+function GetTeamIcon(index)
+{
+  var iconName ="../../res/ic_groupRed.png";
+  switch(index)
+  {
+    case 1:
+      iconName = "../../res/ic_groupRed.png";
+    break;
+    case 2:
+      iconName = "../../res/ic_groupBlue.png";
+      break;
+    case 3:
+      iconName = "../../res/ic_groupBlue.png";
+      break;
+    default:
+    break;
+  }
+
+  return iconName;
+}
+
 //查找跑团信息
 async function findTeam(ctx, next) {
 
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
 
-  if (openid == null || tgroup_key == null ) {
+  if (openid == null || tteam_key == null ) {
     ctx.state.data =
       {
         msg: '上报参数错误'
@@ -195,7 +217,7 @@ async function findTeam(ctx, next) {
     return;
   }
 
-  var res = await mysql("TeamData").where('group_key', tgroup_key)
+  var res = await mysql("TeamData").where('team_key', tteam_key)
   console.log(res);
 
   if (utils.JsonIsNull(res) == true) {
@@ -221,11 +243,11 @@ async function findTeam(ctx, next) {
 async function joinTeam(ctx, next) {
 
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
   var username = ctx.query.username
   var teamIndex = ctx.query.teamIndex
 
-  if (openid == null || tgroup_key == null || username == null || teamIndex == null) {
+  if (openid == null || tteam_key == null || username == null || teamIndex == null) {
     ctx.state.data =
       {
         msg: '上报参数错误'
@@ -233,7 +255,7 @@ async function joinTeam(ctx, next) {
     return;
   }
 
-  var res = await mysql("TeamData").where('group_key', tgroup_key)
+  var res = await mysql("TeamData").where('team_key', tteam_key)
   console.log("joinTeam- find res:",res);
 
   if (utils.JsonIsNull(res) == true) {
@@ -270,18 +292,18 @@ async function joinTeam(ctx, next) {
 
         console.log("======>members:", members)
 
-        await mysql("TeamData").where('group_key', tgroup_key).update('members', JSON.stringify(members))
+        await mysql("TeamData").where('team_key', tteam_key).update('members', JSON.stringify(members))
       }else{
         if (found.state!=1)
         {
           found.state = 1;//1：正常   8：离开
 
-          await mysql("TeamData").where('group_key', tgroup_key).update('members', JSON.stringify(members))
+          await mysql("TeamData").where('team_key', tteam_key).update('members', JSON.stringify(members))
         }
       }
 
       //查询
-      var res2 = await mysql("TeamData").where('group_key', tgroup_key)
+      var res2 = await mysql("TeamData").where('team_key', tteam_key)
 
       if(res!=null)
       {
@@ -309,14 +331,14 @@ async function joinTeam(ctx, next) {
 async function reviseTeam(ctx, next) {
 
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
 
   var startTime = ctx.query.start_time
   var endTime = ctx.query.end_time
   var activeContent = ctx.query.activeContent
   var team_name = ctx.query.team_name
 
-  if (openid == null || tgroup_key == null || startTime == null || endTime == null || team_name == null || activeContent ==null) {
+  if (openid == null || tteam_key == null || startTime == null || endTime == null || team_name == null || activeContent ==null) {
     ctx.state.data =
       {
         msg: '上报参数错误'
@@ -324,7 +346,7 @@ async function reviseTeam(ctx, next) {
     return;
   }
 
-  var res = await mysql("TeamData").where('group_key', tgroup_key)
+  var res = await mysql("TeamData").where('team_key', tteam_key)
   console.log(res);
   //检查跑团是否存在
   if (utils.JsonIsNull(res) == true) {
@@ -339,7 +361,7 @@ async function reviseTeam(ctx, next) {
   
   if (openid == res[0].creator_openid)
   {
-     var requestResult= await mysql("TeamData").where('group_key', tgroup_key).update(
+     var requestResult= await mysql("TeamData").where('team_key', tteam_key).update(
       {
         start_time: startTime, 
         end_time: endTime, 
@@ -351,7 +373,7 @@ async function reviseTeam(ctx, next) {
      console.log("requestResult:", requestResult);
 
     //查询
-    var res2 = await mysql("TeamData").where('group_key', tgroup_key)
+    var res2 = await mysql("TeamData").where('team_key', tteam_key)
 
     if (res != null) {
       ctx.state.data = {};

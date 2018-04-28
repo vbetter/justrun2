@@ -5,9 +5,9 @@ var utils = require('../tools/Utils.js')
 async function reviseTeamIndex(ctx, next)
 {
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
   var teamIndex = ctx.query.teamIndex
-  if (openid == null || tgroup_key == null || teamIndex == null || teamIndex ==0)
+  if (openid == null || tteam_key == null || teamIndex == null || teamIndex ==0)
   {
     ctx.state.data =
       {
@@ -17,9 +17,13 @@ async function reviseTeamIndex(ctx, next)
   }
 
   //先查询有没有这个跑团
-  var res = await mysql("TeamData").where('group_key', tgroup_key)
+  var res = await mysql("TeamData").where('team_key', tteam_key)
   if (res != null && res.length>0)
   {
+    var team_count = parseInt(res[0].team_count)
+
+    teamIndex = teamIndex > team_count ? team_count:teamIndex;
+
     var members = JSON.parse(res[0].members);
     if (members!=null)
     {
@@ -35,9 +39,8 @@ async function reviseTeamIndex(ctx, next)
       if (found!=null)
       {
         found.teamIndex = teamIndex;
-        var mysqlResult = await mysql("TeamData").where('group_key', tgroup_key).update('members', JSON.stringify(members))
+        await mysql("TeamData").where('team_key', tteam_key).update('members', JSON.stringify(members))
 
-        console.log(mysqlResult)
 
         ctx.state.data =
           {
@@ -58,13 +61,13 @@ async function reviseTeamIndex(ctx, next)
 async function punch(ctx, next) 
 {
   var openid = ctx.query.open_id
-  var tgroup_key = ctx.query.group_key
+  var tteam_key = ctx.query.team_key
   var tdistance = ctx.query.distance
   
   var punch_timestamp = ctx.query.punch_timestamp
   var tpunchDate = utils.GetYMD(punch_timestamp * 1000);//转换成格式:2018-04-25
 
-  if (openid == null || tgroup_key == null || tdistance == null || punch_timestamp == null || tpunchDate == null)
+  if (openid == null || tteam_key == null || tdistance == null || punch_timestamp == null || tpunchDate == null)
   {
     ctx.state.data =
       {
@@ -74,7 +77,7 @@ async function punch(ctx, next)
   }
 
   //先查询有没有这个跑团
-  var res = await mysql("TeamData").where('group_key', tgroup_key)
+  var res = await mysql("TeamData").where('team_key', tteam_key)
 
   console.log("====res,",res)
 
@@ -151,10 +154,10 @@ async function punch(ctx, next)
 
         console.log("======>members:", members)
 
-        await mysql("TeamData").where('group_key', tgroup_key).update('members', JSON.stringify(members))
+        await mysql("TeamData").where('team_key', tteam_key).update('members', JSON.stringify(members))
 
         //查询
-        var res = await mysql("TeamData").where('group_key', tgroup_key)
+        var res = await mysql("TeamData").where('team_key', tteam_key)
 
         ctx.state.data = {}
         ctx.state.data.group = res;

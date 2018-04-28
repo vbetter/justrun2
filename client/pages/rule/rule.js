@@ -14,7 +14,7 @@ Page({
     isEditorMode:false,
     team_name: "x",
     team_lead: "x",
-    group_key: "x",
+    team_key: "x",
     create_time: "x",
     start_time: "x",
     end_time: "x",
@@ -52,7 +52,7 @@ Page({
         isEditorMode: false,
         team_name: userDataManager.GetTeamInfo().team_name,
         team_lead: _team_leadName,
-        group_key: teamInfo.group_key,
+        team_key: teamInfo.team_key,
         create_time: timeUtil.GetMD(teamInfo.create_time*1000),
         start_time: timeUtil.GetMD(teamInfo.start_time * 1000),
         end_time: timeUtil.GetMD(teamInfo.end_time * 1000),
@@ -105,7 +105,7 @@ Page({
 
     var start_timestamp = timeUtil.GetTimestampByYMD(this.data.start_time);
     var end_timestamp = timeUtil.GetTimestampByYMD(this.data.end_time);
-    var group_key = userDataManager.m_myInfo.ActiveKey;
+    var team_key = userDataManager.m_myInfo.team_key;
     var open_id = userDataManager.m_myInfo.open_id;
     var team_name = this.data.team_name;
 
@@ -116,7 +116,7 @@ Page({
       return;
     }
 
-    if (util.isEmptyString(group_key)) {
+    if (util.isEmptyString(team_key)) {
       util.showModel('请求失败', "请输入key")
       return;
     }
@@ -138,7 +138,7 @@ Page({
       url: config.service.reviseTeam,
       login: true,
       data: {
-        group_key: group_key,
+        team_key: team_key,
         open_id: open_id,
         team_name: team_name,
         start_time: start_timestamp,

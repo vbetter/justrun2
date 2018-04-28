@@ -2,10 +2,11 @@ var timeUtil = require('TimeUtil.js')
 
 var m_myInfo =
 {
-    MyTeamIndex: 1, //我的分组编号，0:未分组  1:1组，2:2组
-    ActiveKey :"Test001", //由发起者申请，发给每个组员
-    nickname:"",
-    open_id:0 //我的openid
+    MyTeamIndex: 1,       //我的分组编号，0:未分组  1:1组，2:2组
+    team_key :"Test001",  //由发起者申请，发给每个组员
+    nickname:"",          //昵称
+    team_count:2,         //队伍数
+    open_id:0             //我的openid
 }
 
 //队伍信息
@@ -14,7 +15,7 @@ var m_teamInfo = [];
 /*
 var m_teamInfo =
     [{
-      "group_key":"Test001",//跑团唯一key
+      "team_key":"Test001",//跑团唯一key
       "creator_openid":"creator_openid",//创建者，团长
       "create_time":"20180402",//创建日期
       "start_time":"1525104000",//活动开始时间
@@ -337,10 +338,9 @@ function SetTeamInfo(e)
 
   if (this.GetTeamInfo()!=null)
   {
-    this.m_myInfo.ActiveKey = this.GetTeamInfo().group_key
+    this.m_myInfo.team_key = this.GetTeamInfo().team_key
     if (this.GetMyInfo()!=null)this.m_myInfo.MyTeamIndex = this.GetMyInfo().teamIndex
-  }
-    
+  } 
 }
 
 function SetUserInfo(e)
@@ -390,7 +390,7 @@ function SetMyInfo(e)
 {
     if(e!=null)
     {
-      if (e.group_key!=null)this.m_myInfo.ActiveKey = e.group_key
+      if (e.team_key!=null)this.m_myInfo.team_key = e.team_key
       if (e.teamIndex != null)this.m_myInfo.MyTeamIndex = e.teamIndex
     }
 }
@@ -399,7 +399,7 @@ function SetMyInfo(e)
 function SaveMyInfo()
 {
   var myInfoJason = {};
-  myInfoJason.group_key = this.m_myInfo.ActiveKey
+  myInfoJason.team_key = this.m_myInfo.team_key
   myInfoJason.teamIndex = this.m_myInfo.MyTeamIndex
 
   wx.setStorage({
@@ -421,24 +421,34 @@ function IsEnableRequestServer()
   return false
 }
 
+function IsEnableRequestServer_Memeber()
+{
+  
+}
+
+function IsEnableRequestServer_Team()
+{
+
+}
+
 module.exports =
   {
-  IsEnableRequestServer: IsEnableRequestServer,
-  SaveMyInfo:SaveMyInfo,
-  SetMyInfo: SetMyInfo,
-  GetTeamLeadInfo:GetTeamLeadInfo,
-  GetTeamInfo: GetTeamInfo,
-  GetMyInfo: GetMyInfo,
-  GetMyAllRecords: GetMyAllRecords,
-  SetUserInfo: SetUserInfo,
-  m_teamInfo,
-  m_myInfo,
-  SetTeamInfo: SetTeamInfo,
+    IsEnableRequestServer: IsEnableRequestServer,
+    SaveMyInfo: SaveMyInfo,
+    SetMyInfo: SetMyInfo,
+    GetTeamLeadInfo: GetTeamLeadInfo,
+    GetTeamInfo: GetTeamInfo,
+    GetMyInfo: GetMyInfo,
+    GetMyAllRecords: GetMyAllRecords,
+    SetUserInfo: SetUserInfo,
+    m_teamInfo,
+    m_myInfo,
+    SetTeamInfo: SetTeamInfo,
     GetTodayMyPunch: GetTodayMyPunch,
     GetGroupTodayInfo: GetGroupTodayInfo,
-    SetMyTeamIndex:SetMyTeamIndex,
+    SetMyTeamIndex: SetMyTeamIndex,
     GetAllTeamsInfo: GetAllTeamsInfo,
-    GetTeamByTeamIndex:GetTeamByTeamIndex,
+    GetTeamByTeamIndex: GetTeamByTeamIndex,
     IsGroup: IsGroup,
     m_curSelectGroup,
   }
