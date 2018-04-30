@@ -230,10 +230,36 @@ async function findTeam(ctx, next) {
   }
   else {
 
-    ctx.state.data = {};
-    ctx.state.data.group = res;
-    ctx.state.data.msg = "success";
-    return;
+    var members = JSON.parse(res[0].members);
+    if (members != null) {
+      var found = null;
+      for (var i = 0; i < members.length; i++) {
+        var item = members[i];
+        console.log("item.openid:", item.openid)
+
+        if (item.openid == openid) {
+          found = item;
+          break;
+        }
+      }
+
+      if (found!=null)
+      {
+        if(found.state == 1)
+        {
+          ctx.state.data = {};
+          ctx.state.data.group = res;
+          ctx.state.data.msg = "success";
+          return;
+        }else if(found.state ==8){
+          ctx.state.data =
+            {
+              msg: '请先加入跑团'
+            }
+          return;
+        }
+      }
+    }
   }
   ctx.state.data =
     {
@@ -299,6 +325,8 @@ async function joinTeam(ctx, next) {
         if (found.state!=1)
         {
           found.state = 1;//1：正常   8：离开
+          found.username = username;
+          found.teamIndex = teamIndex;
 
           await mysql("TeamData").where('team_key', tteam_key).update('members', JSON.stringify(members))
         }

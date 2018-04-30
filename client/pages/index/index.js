@@ -211,8 +211,9 @@ Page({
         return;
       }
 
-      if (this.data.userInfo == null || this.data.userInfo.openId == null) {
+      if (userDataManager.m_myInfo.username == null) {
         util.showModel('请求失败', '无效用户信息');
+        return;
       }
       
       util.showBusy('请求中...')
@@ -222,8 +223,8 @@ Page({
         login: true,
         data: {
           team_key: that.data.team_key,
-          open_id: that.data.userInfo.openId,
-          username: that.data.userInfo.username,
+          open_id: userDataManager.m_myInfo.open_id,
+          username: userDataManager.m_myInfo.username,
           teamIndex: that.data.myGroupIndex
         },
         success(result) {

@@ -139,7 +139,7 @@ Page({
 
     var myDistanceValue = parseFloat(this.data.inputValue2);
     console.log("myDistanceValue:",myDistanceValue);
-    if (myDistanceValue!=NaN && myDistanceValue>=3)
+    if (myDistanceValue!=null && myDistanceValue>=0)
     {
       util.showBusy('请求中...')
       var that = this

@@ -68,7 +68,7 @@ Page({
       return;
     }
 
-    if (util.isEmptyString(userDataManager.m_myInfo.nickname))
+    if (util.isEmptyString(userDataManager.m_myInfo.username))
     {
       util.showModel('请求失败', "昵称为空")
       return;
@@ -83,7 +83,7 @@ Page({
       data: {
         team_key: that.data.team_key,
         open_id: userDataManager.m_myInfo.open_id,
-        username: userDataManager.m_myInfo.nickname,
+        username: userDataManager.m_myInfo.username,
         start_time: start_timestamp,
         end_time: end_timestamp,
         activeContent: that.data.activeContent,

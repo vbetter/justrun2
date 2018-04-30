@@ -4,7 +4,7 @@ var m_myInfo =
 {
     MyTeamIndex: 1,       //我的分组编号，0:未分组  1:1组，2:2组
     team_key :"Test001",  //由发起者申请，发给每个组员
-    nickname:"",          //昵称
+    username:"",          //昵称
     team_count:2,         //队伍数
     open_id:0             //我的openid
 }
@@ -379,7 +379,7 @@ function SetUserInfo(e)
 {
   console.log("SetUserInfo:", e);
 
-  if (e.nickName!=null)this.m_myInfo.nickname = e.nickName
+  if (e.nickName != null) this.m_myInfo.username = e.nickName
   if (e.openId!=null)this.m_myInfo.open_id = e.openId;
 
 }
@@ -443,9 +443,9 @@ function SaveMyInfo()
 //是否能请求无服务器
 function IsEnableRequestServer()
 {
-  if(m_myInfo!=null)
+  if(this.m_myInfo!=null)
   {
-    if (m_myInfo.open_id!=null && m_myInfo.open_id!=0)
+    if (this.m_myInfo.open_id!=null && this.m_myInfo.open_id!=0)
     {
       return true;
     }
