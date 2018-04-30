@@ -339,8 +339,40 @@ function SetTeamInfo(e)
   if (this.GetTeamInfo()!=null)
   {
     this.m_myInfo.team_key = this.GetTeamInfo().team_key
-    if (this.GetMyInfo()!=null)this.m_myInfo.MyTeamIndex = this.GetMyInfo().teamIndex
+    if (this.GetMyInfo()!=null)
+    {
+      this.m_myInfo.MyTeamIndex = this.GetMyTeamIndex();
+      this.m_myInfo.team_count = this.GetTeamInfo().team_count;
+    }
   } 
+}
+
+function GetMyTeamIndex()
+{
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0)
+    return 0;
+
+  if (this.m_myInfo == null || this.m_myInfo.open_id ==0)
+  {
+    return 0;
+  }
+
+  //修改结构体里面数据
+  var myMember = this.m_teamInfo[0].members
+  if (myMember != null) {
+    //console.log("GetTodayMyPunch-myMember:", myMember)
+
+    for (var i = 0; i < myMember.length; i++) {
+      var item = myMember[i];
+
+      //console.log("item.record:", item.record)
+      if (item.openid == m_myInfo.open_id) {
+        return item.teamIndex;
+      }
+    }
+  }
+
+  return 0;
 }
 
 function SetUserInfo(e)
@@ -421,18 +453,27 @@ function IsEnableRequestServer()
   return false
 }
 
-function IsEnableRequestServer_Memeber()
+//获取团员总人数，包括团长
+function GetTotalMembers()
 {
-  
-}
+  if (this.m_teamInfo == null || this.m_teamInfo.length <= 0) {
+    console.log("m_teamInfo is null");
 
-function IsEnableRequestServer_Team()
-{
+    return null;
+  }
 
+  var myMember = this.m_teamInfo[0].members
+  if (myMember != null) {
+    //console.log("GetTodayMyPunch-myMember:", myMember)
+    return myMember.length;
+  }
+
+  return 0;
 }
 
 module.exports =
   {
+    GetTotalMembers,//获取团员总人数，包括团长
     IsEnableRequestServer: IsEnableRequestServer,
     SaveMyInfo: SaveMyInfo,
     SetMyInfo: SetMyInfo,
@@ -447,6 +488,7 @@ module.exports =
     GetTodayMyPunch: GetTodayMyPunch,
     GetGroupTodayInfo: GetGroupTodayInfo,
     SetMyTeamIndex: SetMyTeamIndex,
+    GetMyTeamIndex: GetMyTeamIndex,
     GetAllTeamsInfo: GetAllTeamsInfo,
     GetTeamByTeamIndex: GetTeamByTeamIndex,
     IsGroup: IsGroup,

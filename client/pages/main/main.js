@@ -198,7 +198,6 @@ Page({
   },
   bindKeyInput: function (e) {
     this.setData({
-      inputValue: e.detail.value,
       inputValue2: e.detail.value
     })
   }

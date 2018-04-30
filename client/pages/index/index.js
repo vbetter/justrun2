@@ -128,6 +128,12 @@ Page({
       var index = parseInt ( e.detail.value) +1;
       console.log('picker发送选择改变，携带值为', index)
 
+      if (index > userDataManager.m_myInfo.team_count)
+      {
+        util.showModel('请求失败', "设置分组错误,小组数量为:" + userDataManager.m_myInfo.team_count);
+        return;
+      }
+
       if(index!=this.data.myGroupIndex)
       {
         this.setData({
@@ -314,48 +320,28 @@ Page({
         return;
       }
 
-      util.showBusy('请求中...')
-      var that = this
-      var options = {
-        url: config.service.leaveTeam,
-        login: true,
-        data: {
-          team_key: this.data.team_key,
-          open_id: this.data.userInfo.openId,
-        },
-        success(result) {
-          if (result.data != null && result.data.data != null && result.data.data.msg == "success")
-          {
-            that.clearMyInfo();
 
-            that.updateUI();
-
-            wx.removeStorage({
-              key: 'MyInfo',
-              success: function(res) {},
-            })
-
-            util.showSuccess('请求成功完成')
-          }
-          else
-          {
-            util.showModel('请求失败', result.data.data.msg);
-
-            that.clearMyInfo();
-          }
-        },
-        fail(error) {
-          util.showModel('请求失败', error);
-          console.log('request fail', error);
-
-          that.clearMyInfo();
-        }
+      if (userDataManager.GetTeamInfo().creator_openid == userDataManager.m_myInfo.open_id)
+      {
+        var that = this;
+       wx.showModal({
+         title: '提示',
+         content: '你是团长，退出跑团意味着解散！',
+         success: function (res) {
+           if (res.confirm) {
+             that.requestLeaveTeam();
+           } else if (res.cancel) {
+             console.log('用户点击取消')
+           }
+         }
+       })   
       }
-      if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
-        qcloud.request(options)
-      } else {    // 使用 wx.request 则不带登录态
-        wx.request(options)
+      else
+      {
+        this.requestLeaveTeam();
       }
+
+      
     },
     clearMyInfo:function()
     {
@@ -410,6 +396,49 @@ updateUI:function()
   
 }
 ,
+
+requestLeaveTeam: function () {
+  util.showBusy('请求中...')
+  var that = this
+  var options = {
+    url: config.service.leaveTeam,
+    login: true,
+    data: {
+      team_key: this.data.team_key,
+      open_id: this.data.userInfo.openId,
+    },
+    success(result) {
+      if (result.data != null && result.data.data != null && result.data.data.msg == "success") {
+        that.clearMyInfo();
+
+        that.updateUI();
+
+        wx.removeStorage({
+          key: 'MyInfo',
+          success: function (res) { },
+        })
+
+        util.showSuccess('请求成功完成')
+      }
+      else {
+        util.showModel('请求失败', result.data.data.msg);
+
+        that.clearMyInfo();
+      }
+    },
+    fail(error) {
+      util.showModel('请求失败', error);
+      console.log('request fail', error);
+
+      that.clearMyInfo();
+    }
+  }
+  if (this.data.takeSession) {  // 使用 qcloud.request 带登录态登录
+    qcloud.request(options)
+  } else {    // 使用 wx.request 则不带登录态
+    wx.request(options)
+  }
+},
 onClickActiveContent:function(e)
 {
   console.log("onClickActiveContent")

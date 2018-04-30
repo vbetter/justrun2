@@ -6,6 +6,7 @@ var util = require('../../utils/util.js')
 var userDataManager = require('../../utils/UserDataManager.js')
 var timeUtil = require('../../utils/TimeUtil.js')
 
+var rulefontMax = 1000; //规则字数上限
 
 Page({
 
@@ -22,7 +23,7 @@ Page({
     start_time_date:"",
 
     end_time_date: "",
-
+    ruleFonts:"0/1000",
     activeContent: ''
   },
   //点击创建跑团
@@ -87,6 +88,7 @@ Page({
         end_time: end_timestamp,
         activeContent: that.data.activeContent,
         team_name: that.data.team_name,
+        minKM: that.data.minKM,
         team_count: that.data.team_count
       },
       success(result) {
@@ -150,6 +152,16 @@ Page({
       }
     )
   },
+  bindKeyInput_minKM:function(e)
+  {
+    var tValue = parseFloat(e.detail.value);
+
+    this.setData(
+      {
+        minKM: tValue
+      }
+    )
+  },
   bindKeyInput_teamName: function (e) {
     this.setData({
       team_name: e.detail.value
@@ -170,8 +182,16 @@ Page({
       team_key: e.detail.value
     })
   },
-  bindKeyInput_activeContent: function (e) {
+  bindKeyInput_activeContent: function (e) 
+  {
+    if (e.detail.value>rulefontMax)
+    {
+      console.log("规则字数超过上限:" + rulefontMax)
+      return;
+    }
+    var tValue = e.detail.value.length + "/"+rulefontMax;
     this.setData({
+      ruleFonts:tValue,
       activeContent: e.detail.value
     })
   },

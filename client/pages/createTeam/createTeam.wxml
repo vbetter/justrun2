@@ -48,7 +48,18 @@
                 </view>
                 <view class="weui-cell__bd">
 
-                <input class="weui-input" type="digit" placeholder="2" value = "{{team_count}}" bindinput="bindKeyInput_teamCount"/>
+                <input class="weui-input" type="digit" placeholder="输入小组数量" value = "{{team_count}}" bindinput="bindKeyInput_teamCount"/>
+
+                </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">最低公里</view>
+                </view>
+                <view class="weui-cell__bd">
+
+                <input class="weui-input" type="digit" placeholder="输入最低几公里" value = "{{minKM}}" bindinput="bindKeyInput_minKM"/>
 
                 </view>
             </view>
@@ -73,7 +84,7 @@
             <view class="weui-cell">
                 <view class="weui-cell__bd">
                     <textarea class="weui-textarea" value='{{activeContent}}' bindinput='bindKeyInput_activeContent' placeholder="请输入活动规则,1000字以内" style="height: 3.3em" maxlength = "1000" />
-                    <view class="weui-textarea-counter">0/1000</view>
+                    <view class="weui-textarea-counter">{{ruleFonts}}</view>
                 </view>
             </view>
         </view>

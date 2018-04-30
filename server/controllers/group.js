@@ -91,9 +91,10 @@ async function createTeam(ctx,next)
   var team_count = ctx.query.team_count
   var team_name = ctx.query.team_name
   var activeContent = ctx.query.activeContent
+  var minKM = ctx.query.minKM
 
   if (openid == null || tteam_key == null || startTime == null || endTime == null || username == null || team_count ==null
-    || startTime == 0 || endTime == 0
+    || startTime == 0 || endTime == 0 || minKM == null
   ) {
     ctx.state.data =
       {
@@ -144,6 +145,7 @@ async function createTeam(ctx,next)
     var newItem =
       {
       }
+      
     newItem.team_key = tteam_key;
     newItem.creator_openid = openid
     newItem.team_count = team_count;
@@ -154,12 +156,12 @@ async function createTeam(ctx,next)
     newItem.create_time = create_time;
     newItem.teams = JSON.stringify(teams);
     newItem.members = JSON.stringify(members);
-    
+    newItem.minKM = minKM;
 
     console.log("====== new item:",newItem)
 
     //创建
-    await mysql("TeamData").insert(newItem)
+    await mysql("TeamData").insert(newItem);
 
     console.log("====== createResult:")
 
@@ -337,8 +339,11 @@ async function reviseTeam(ctx, next) {
   var endTime = ctx.query.end_time
   var activeContent = ctx.query.activeContent
   var team_name = ctx.query.team_name
+  var minKM = ctx.query.minKM;
 
-  if (openid == null || tteam_key == null || startTime == null || endTime == null || team_name == null || activeContent ==null) {
+  if (openid == null || tteam_key == null || startTime == null || endTime == null || team_name == null || activeContent ==null
+    || minKM == null
+  ) {
     ctx.state.data =
       {
         msg: '上报参数错误'
@@ -366,6 +371,7 @@ async function reviseTeam(ctx, next) {
         start_time: startTime, 
         end_time: endTime, 
         team_name: team_name,
+        minKM: minKM,
         activeContent: activeContent
       }
     )

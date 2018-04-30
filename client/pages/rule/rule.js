@@ -19,6 +19,8 @@ Page({
     start_time: "x",
     end_time: "x",
     activeContent: 'x',
+    member_count:0,
+    team_count:0,
     activeTitle: 'x'
   },
 
@@ -56,7 +58,9 @@ Page({
         create_time: timeUtil.GetMD(teamInfo.create_time*1000),
         start_time: timeUtil.GetMD(teamInfo.start_time * 1000),
         end_time: timeUtil.GetMD(teamInfo.end_time * 1000),
-
+        team_count: userDataManager.GetTeamInfo().team_count,
+        member_count: userDataManager.GetTotalMembers(),
+        minKM: userDataManager.GetTeamInfo().minKM,
         activeContent: userDataManager.GetTeamInfo().activeContent
       })
     }
@@ -88,6 +92,16 @@ Page({
       }
     )
   },
+  bindKeyInput_minKM:function(e)
+  {
+    var tValue = parseFloat(e.detail.value);
+
+    this.setData(
+      {
+        minKM: tValue
+      }
+    )
+  },
   onClickEditor:function(e)
   {
     this.setData({
@@ -108,7 +122,8 @@ Page({
     var team_key = userDataManager.m_myInfo.team_key;
     var open_id = userDataManager.m_myInfo.open_id;
     var team_name = this.data.team_name;
-
+    var minKM = this.data.minKM;
+    
     console.log("team_name:", team_name)
 
     if (start_timestamp == null || start_timestamp == 0 || end_timestamp == null || end_timestamp == 0 || start_timestamp >= end_timestamp) {
@@ -143,6 +158,7 @@ Page({
         team_name: team_name,
         start_time: start_timestamp,
         end_time: end_timestamp,
+        minKM: minKM,
         activeContent: that.data.activeContent
       },
       success(result) {
@@ -177,7 +193,7 @@ Page({
         else {
           util.showModel('请求失败', result.data.data.msg);
 
-          this.setData({
+          that.setData({
             isEditorMode: false
           })
         }
@@ -186,7 +202,7 @@ Page({
         util.showModel('请求失败', error);
         console.log('request fail', error);
 
-        this.setData({
+        that.setData({
           isEditorMode: false
         })
       }

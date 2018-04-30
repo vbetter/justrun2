@@ -34,6 +34,18 @@
                     <view class="weui-form-preview__label">结束时间</view>
                     <view class="weui-form-preview__value">{{end_time}}</view>
                 </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">小组数量</view>
+                    <view class="weui-form-preview__value">{{team_count}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">团员数量</view>
+                    <view class="weui-form-preview__value">{{member_count}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">最低公里</view>
+                    <view class="weui-form-preview__value">{{minKM}}</view>
+                </view>
             </view>
             <view class="weui-form-preview__ft">
                 <view class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active"
@@ -88,6 +100,18 @@
                     </picker>
                 </view>
             </view>
+
+
+            <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">最低公里</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <input class="weui-input" type="digit" placeholder="请输入公里数" bindinput='bindKeyInput_minKM' value='{{minKM}}'/>
+                </view>
+            </view>
+
+
 </view>
 </view>
 
@@ -103,11 +127,13 @@
                 </view>
             </view>
         </view>
-    </view>
+
+
 
         <view class="weui-btn-area">
             <button class="weui-btn" type="primary" bindtap="onClickEditorDone">确定</button>
         </view>
 
+    </view>
 
 </view> 

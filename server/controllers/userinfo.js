@@ -67,7 +67,7 @@ async function punch(ctx, next)
   var punch_timestamp = ctx.query.punch_timestamp
   var tpunchDate = utils.GetYMD(punch_timestamp * 1000);//转换成格式:2018-04-25
 
-  if (openid == null || tteam_key == null || tdistance == null || punch_timestamp == null || tpunchDate == null)
+  if (openid == null || tteam_key == null || tdistance == null || tdistance ==0|| punch_timestamp == null || tpunchDate == null)
   {
     ctx.state.data =
       {
