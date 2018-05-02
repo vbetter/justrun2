@@ -59,12 +59,12 @@
 
 </view>
 
-        <view class="weui-btn-area"  wx:if="{{!hasTeam}}">
-            <button class="weui-btn" type="primary" bindtap="joinTeam">加入跑团</button>
+        <view class="uploader"  wx:if="{{!hasTeam}}">
+            <text class="uploader-text" bindtap="joinTeam">加入跑团</text>
         </view>
 
-        <view class="weui-btn-area"  wx:if="{{!hasTeam}}">
-            <button class="weui-btn" type="warn" bindtap="createTeam">创建跑团</button>
+        <view class="uploader"  wx:if="{{!hasTeam}}">
+            <text class="uploader-text" bindtap="createTeam">创建跑团</text>
         </view>
 
 

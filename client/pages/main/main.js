@@ -63,7 +63,7 @@ Page({
     var myDistanceStr = "";
     if (myPunch == null) {
       isPunch = true;
-      myDistanceStr = "数据异常，重新拉取数据";
+      myDistanceStr = "未加入跑团";
     } else {
       isPunch = myPunch.distance >= 3 ? true : false;
       myDistanceStr = isPunch ? "已跑步 " + myPunch.distance + " 公里" : "";
@@ -192,7 +192,8 @@ Page({
       } else {    // 使用 wx.request 则不带登录态
         wx.request(options)
       }
-    }else{
+    }
+    else{
       util.showModel('请求失败', "数据格式有误:" + myDistanceValue + "，例如输入:3.01");
     }
   },
