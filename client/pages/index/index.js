@@ -5,6 +5,30 @@ var util = require('../../utils/util.js')
 var userDataManager = require('../../utils/UserDataManager.js')
 var timeUtil = require('../../utils/TimeUtil.js')
 
+// 显示繁忙提示
+var showBusy = text => wx.showToast({
+  title: text,
+  icon: 'loading',
+  duration: 10000
+});
+
+// 显示成功提示
+var showSuccess = text => wx.showToast({
+  title: text,
+  icon: 'success'
+});
+
+// 显示失败提示
+var showModel = (title, content) => {
+  wx.hideToast();
+
+  wx.showModal({
+    title,
+    content: JSON.stringify(content),
+    showCancel: false
+  });
+};
+
 Page({
     data: {
         enableCreate:false,//能否创建跑团
@@ -37,7 +61,134 @@ Page({
         title: '个人设置',
       })
 
-      this.login();
+      var that = this;
+      
+      // 查看是否授权
+      wx.getSetting({
+        success: function (res) {
+          if (res.authSetting['scope.userInfo']) {
+
+            // 检查登录是否过期
+            wx.checkSession({
+              success: function () {
+                // 登录态未过期
+                showSuccess('登录成功');
+                console.log('bindGetUserInfo 登录成功');
+
+                that.doLogin()
+              },
+
+              fail: function () {
+                qcloud.clearSession();
+                
+              },
+            });
+          } else {
+            console.log('用户未授权');
+          }
+        }
+      });
+      
+    },
+    doLogin() {
+      var that = this;
+      
+      showBusy('正在登录');
+
+      // 登录之前需要调用 qcloud.setLoginUrl() 设置登录地址，不过我们在 app.js 的入口里面已经调用过了，后面就不用再调用了
+      qcloud.login({
+        success(result) {
+          showSuccess('登录成功');
+          console.log('doLogin 登录成功', result);
+
+          userDataManager.SetUserInfo(result);
+
+          util.showSuccess('登录成功')
+          that.setData({
+            userInfo: result,
+            logged: true
+          })
+
+/*
+          wx.reLaunch({
+            url: '../../pages/index/index',
+          })
+          */
+        },
+
+        fail(error) {
+          showModel('登录失败', error);
+          console.log('doLogin 登录失败', error);
+        }
+      });
+    },
+    bindGetUserInfo: function (e) {
+
+      showBusy('正在登录');
+
+      var that = this;
+      var userInfo = e.detail.userInfo;
+
+      // 查看是否授权
+      wx.getSetting({
+        success: function (res) {
+          if (res.authSetting['scope.userInfo']) {
+
+            // 检查登录是否过期
+            wx.checkSession({
+              success: function () {
+                // 登录态未过期
+                showSuccess('登录成功');
+                console.log('bindGetUserInfo 登录成功', userInfo);
+
+                that.doLogin()
+              },
+
+              fail: function () {
+                qcloud.clearSession();
+                // 登录态已过期，需重新登录
+                var options = {
+                  encryptedData: e.detail.encryptedData,
+                  iv: e.detail.iv,
+                  userInfo: userInfo
+                }
+                that.getWxLogin(options);
+              },
+            });
+          } else {
+            showModel('用户未授权', e.detail.errMsg);
+          }
+        }
+      });
+    },
+    getWxLogin: function (options) {
+      var that = this;
+
+      wx.login({
+        success: function (loginResult) {
+          var loginParams = {
+            code: loginResult.code,
+            encryptedData: options.encryptedData,
+            iv: options.iv,
+          }
+          qcloud.requestLogin({
+            loginParams, success() {
+              showSuccess('登录成功');
+              console.log('登录成功', options.userInfo);
+
+              that.doLogin()
+            },
+            fail(error) {
+              showModel('登录失败', error)
+              console.log('登录失败', error)
+            }
+          });
+        },
+        fail: function (loginError) {
+          showModel('登录失败', loginError)
+          console.log('登录失败', loginError)
+        },
+      });
     },
     // 用户登录示例
     login: function() {

@@ -3,7 +3,14 @@
 <view class="page__bd">
 
     <!-- 用户登录测试 -->
-    <view class="userinfo" bindtap="login">
+        <view class="line-control" wx:if="{{!logged}}">
+            <!-- <view bindtap="doLogin" class="item"><view class="item-inner">登录</view></view>  -->
+             <view class="item">
+             <button class="userinfo-nicknam item-inner login-button" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">登录</button></view>             
+        </view>
+
+    <!-- 用户登录测试 -->
+    <view class="userinfo" wx:if="{{logged}}">
         <image
             class="userinfo-avatar"
             src="{{logged ? userInfo.avatarUrl : './user-unlogin.png'}}"
@@ -16,6 +23,7 @@
         </view>
     </view>
 
+<view class = "runPanel" wx:if="{{logged}}">
 <!-- 我的记录-->
    <view class="uploader"  wx:if="{{hasTeam}}">
         <view class="uploader-text" bindtap="doMyRecord">
@@ -80,4 +88,6 @@
             <text class='leavetext'>退出跑团</text>
         </view>
     </view>
+</view>
+
 </view>

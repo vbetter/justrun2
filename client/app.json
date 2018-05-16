@@ -10,11 +10,10 @@
     "pages/createTeam/createTeam"
   ],
   "window": {
-    "backgroundColor": "#F6F6F6",
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "Wafer Quick Start",
-    "navigationBarTextStyle": "black"
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#333",
+        "navigationBarTitleText": "腾讯云小程序解决方案",
+        "navigationBarTextStyle": "white"
   },
   "tabBar": {
     "selectedColor": "#1296db",
